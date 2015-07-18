@@ -106,12 +106,12 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
 
             // create graphic styles
             mHourPaint = new Paint();
-            mHourPaint.setARGB(255, 200, 200, 200);
+            mHourPaint.setARGB(255, 46, 37, 230);
             mHourPaint.setStrokeWidth(5.0f);
             mHourPaint.setAntiAlias(true);
             mHourPaint.setStrokeCap(Paint.Cap.ROUND);
             mMinutePaint = new Paint();
-            mMinutePaint.setARGB(255, 123, 123, 123);
+            mMinutePaint.setARGB(255, 8, 194, 14);
             mMinutePaint.setStrokeWidth(2.0f);
             mMinutePaint.setAntiAlias(true);
             mMinutePaint.setStrokeCap(Paint.Cap.BUTT);
@@ -189,7 +189,7 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
 
             float secLength = centerX - 20;
             float minLength = centerX - 40;
-            float hrLength = centerX - 80;
+            float hrLength = centerX - 60;
 
             // Only draw the second hand in interactive mode.
             if (!isInAmbientMode()) {

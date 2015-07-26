@@ -48,6 +48,7 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
         // graphic objects
         private Bitmap mBackgroundBitmap;
         private Bitmap mBackgroundScaledBitmap;
+        private Paint mTickPaint;
         private Paint mHourPaint;
         private Paint mMinutePaint;
         private Paint mSecondPaint;
@@ -105,14 +106,18 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
             mBackgroundBitmap = ((BitmapDrawable) backgroundDrawable).getBitmap();
 
             // create graphic styles
+            mTickPaint = new Paint();
+            mTickPaint.setARGB(100, 0, 0, 0);
+            mTickPaint.setStrokeWidth(2.f);
+            mTickPaint.setAntiAlias(true);
             mHourPaint = new Paint();
             mHourPaint.setARGB(255, 46, 37, 230);
             mHourPaint.setStrokeWidth(5.0f);
             mHourPaint.setAntiAlias(true);
             mHourPaint.setStrokeCap(Paint.Cap.ROUND);
             mMinutePaint = new Paint();
-            mMinutePaint.setARGB(255, 8, 194, 14);
-            mMinutePaint.setStrokeWidth(2.0f);
+            mMinutePaint.setARGB(255, 38, 50, 200);
+            mMinutePaint.setStrokeWidth(4.0f);
             mMinutePaint.setAntiAlias(true);
             mMinutePaint.setStrokeCap(Paint.Cap.BUTT);
             mSecondPaint = new Paint();
@@ -177,6 +182,19 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
             // just the usable portion.
             float centerX = width / 2f;
             float centerY = height / 2f;
+
+            // Draw the ticks.
+            float innerTickRadius = centerX - 10;
+            float outerTickRadius = centerX;
+            for (int tickIndex = 0; tickIndex < 12; tickIndex++) {
+                float tickRot = tickIndex * TWO_PI / 12;
+                float innerX = (float) Math.sin(tickRot) * innerTickRadius;
+                float innerY = (float) -Math.cos(tickRot) * innerTickRadius;
+                float outerX = (float) Math.sin(tickRot) * outerTickRadius;
+                float outerY = (float) -Math.cos(tickRot) * outerTickRadius;
+                canvas.drawLine(centerX + innerX, centerY + innerY,
+                        centerX + outerX, centerY + outerY, mTickPaint);
+            }
 
             // Compute rotations and lengths for the clock hands.
             float seconds = mCalendar.get(Calendar.SECOND) +

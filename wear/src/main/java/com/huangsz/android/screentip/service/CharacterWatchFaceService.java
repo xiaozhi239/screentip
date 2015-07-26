@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -24,6 +25,11 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 public class CharacterWatchFaceService extends CanvasWatchFaceService {
+
+    private static final Typeface BOLD_TYPEFACE =
+            Typeface.create(Typeface.SERIF, Typeface.BOLD);
+    private static final Typeface NORMAL_TYPEFACE =
+            Typeface.create(Typeface.SERIF, Typeface.NORMAL);
 
     @Override
     public Engine onCreateEngine() {
@@ -52,6 +58,10 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
         private Paint mHourPaint;
         private Paint mMinutePaint;
         private Paint mSecondPaint;
+        private Paint mCharacterPaint;  // Paint to show a character as a reminder tip.
+
+        // TODO(huangsz) Receive this from handheld device.
+        private static final String TIP_TEXT = "宝";
 
         /**
          * handler to update the time once a second in interactive mode
@@ -126,6 +136,8 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
             mSecondPaint.setAntiAlias(true);
             mSecondPaint.setStrokeCap(Paint.Cap.BUTT);
 
+            mCharacterPaint = createTextPaint(resources, false);
+
             // allocate a Calendar to calculate local time using the UTC time and time zone
             mCalendar = Calendar.getInstance();
         }
@@ -159,6 +171,9 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
                 boolean antiAlias = !inAmbientMode;
                 mHourPaint.setAntiAlias(antiAlias);
                 mMinutePaint.setAntiAlias(antiAlias);
+                // mSecondPaint is not presented in ambient mode anyway.
+                mTickPaint.setAntiAlias(antiAlias);
+                mCharacterPaint.setAntiAlias(antiAlias);
             }
             invalidate();
             updateTimer();
@@ -226,6 +241,11 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
             float hrY = (float) -Math.cos(hrRot) * hrLength;
             canvas.drawLine(centerX, centerY, centerX + hrX, centerY + hrY,
                     mHourPaint);
+
+            // Draw the character.
+            float charX = centerX;
+            float charY = centerY * 1.6f;
+            canvas.drawText(TIP_TEXT, charX, charY, mCharacterPaint);
         }
 
         @Override
@@ -250,6 +270,17 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
                         width, height, true /* filter */);
             }
             super.onSurfaceChanged(holder, format, width, height);
+        }
+
+        private Paint createTextPaint(Resources resources, boolean isBold) {
+            Paint paint = new Paint();
+            paint.setColor(resources.getColor(R.color.black));
+            paint.setAntiAlias(true);
+            paint.setTextAlign(Paint.Align.CENTER);
+            paint.setTypeface(isBold ? BOLD_TYPEFACE : NORMAL_TYPEFACE);
+            paint.setTextSize(resources.getDimension(R.dimen.tip_text_size));
+            paint.setColor(resources.getColor(R.color.tip_text_color));
+            return paint;
         }
 
         private void maybeRegisterTimeZoneReceiver() {

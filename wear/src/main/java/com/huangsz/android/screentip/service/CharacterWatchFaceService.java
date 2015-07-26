@@ -40,6 +40,9 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
     /* implement service callback methods */
     private class Engine extends CanvasWatchFaceService.Engine {
 
+        // Constant to help calculate clock hand rotations
+        private static final float TWO_PI = (float) Math.PI * 2f;
+
         private static final int MSG_UPDATE_TIME = 0;
 
         private static final int INTERACTIVE_UPDATE_RATE_MS = 1000;
@@ -54,7 +57,8 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
         // graphic objects
         private Bitmap mBackgroundBitmap;
         private Bitmap mBackgroundScaledBitmap;
-        private Paint mTickPaint;
+        private Paint mMinTickPaint;
+        private Paint mSecTickPaint;
         private Paint mHourPaint;
         private Paint mMinutePaint;
         private Paint mSecondPaint;
@@ -116,25 +120,16 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
             mBackgroundBitmap = ((BitmapDrawable) backgroundDrawable).getBitmap();
 
             // create graphic styles
-            mTickPaint = new Paint();
-            mTickPaint.setARGB(100, 0, 0, 0);
-            mTickPaint.setStrokeWidth(2.f);
-            mTickPaint.setAntiAlias(true);
-            mHourPaint = new Paint();
-            mHourPaint.setARGB(255, 46, 37, 230);
-            mHourPaint.setStrokeWidth(5.0f);
-            mHourPaint.setAntiAlias(true);
-            mHourPaint.setStrokeCap(Paint.Cap.ROUND);
-            mMinutePaint = new Paint();
-            mMinutePaint.setARGB(255, 38, 50, 200);
-            mMinutePaint.setStrokeWidth(4.0f);
-            mMinutePaint.setAntiAlias(true);
-            mMinutePaint.setStrokeCap(Paint.Cap.BUTT);
-            mSecondPaint = new Paint();
-            mSecondPaint.setARGB(255, 32, 32, 32);
-            mSecondPaint.setStrokeWidth(2.0f);
-            mSecondPaint.setAntiAlias(true);
-            mSecondPaint.setStrokeCap(Paint.Cap.BUTT);
+            mMinTickPaint = createLinePaint(resources.getColor(R.color.minute_tick_color),
+                    2.f, Paint.Cap.ROUND);
+            mSecTickPaint = createLinePaint(resources.getColor(R.color.second_tick_color),
+                    1.f, Paint.Cap.BUTT);
+            mHourPaint = createLinePaint(
+                    resources.getColor(R.color.hour_bar_color), 5.f, Paint.Cap.ROUND);
+            mMinutePaint = createLinePaint(
+                    resources.getColor(R.color.minute_bar_color), 4.f, Paint.Cap.ROUND);
+            mSecondPaint = createLinePaint(
+                    resources.getColor(R.color.second_bar_color), 2.f, Paint.Cap.BUTT);
 
             mCharacterPaint = createTextPaint(resources, false);
 
@@ -172,7 +167,7 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
                 mHourPaint.setAntiAlias(antiAlias);
                 mMinutePaint.setAntiAlias(antiAlias);
                 // mSecondPaint is not presented in ambient mode anyway.
-                mTickPaint.setAntiAlias(antiAlias);
+                mMinTickPaint.setAntiAlias(antiAlias);
                 mCharacterPaint.setAntiAlias(antiAlias);
             }
             invalidate();
@@ -183,9 +178,6 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
         public void onDraw(Canvas canvas, Rect bounds) {
             // Update the time
             mCalendar.setTimeInMillis(System.currentTimeMillis());
-
-            // Constant to help calculate clock hand rotations
-            final float TWO_PI = (float) Math.PI * 2f;
 
             int width = bounds.width();
             int height = bounds.height();
@@ -199,17 +191,8 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
             float centerY = height / 2f;
 
             // Draw the ticks.
-            float innerTickRadius = centerX - 10;
-            float outerTickRadius = centerX;
-            for (int tickIndex = 0; tickIndex < 12; tickIndex++) {
-                float tickRot = tickIndex * TWO_PI / 12;
-                float innerX = (float) Math.sin(tickRot) * innerTickRadius;
-                float innerY = (float) -Math.cos(tickRot) * innerTickRadius;
-                float outerX = (float) Math.sin(tickRot) * outerTickRadius;
-                float outerY = (float) -Math.cos(tickRot) * outerTickRadius;
-                canvas.drawLine(centerX + innerX, centerY + innerY,
-                        centerX + outerX, centerY + outerY, mTickPaint);
-            }
+            drawTicks(canvas, centerX, centerY, 10, 12, mMinTickPaint);
+            drawTicks(canvas, centerX, centerY, 3, 60, mSecTickPaint);
 
             // Compute rotations and lengths for the clock hands.
             float seconds = mCalendar.get(Calendar.SECOND) +
@@ -270,6 +253,30 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
                         width, height, true /* filter */);
             }
             super.onSurfaceChanged(holder, format, width, height);
+        }
+
+        private void drawTicks(Canvas canvas, float centerX, float centerY,
+                               int length, int divisions, Paint paint) {
+            float outerTickRadius = centerX;
+            float innerTickRadius = centerX - length;
+            for (int tickIndex = 0; tickIndex < divisions; tickIndex++) {
+                float tickRot = tickIndex * TWO_PI / divisions;
+                float innerX = (float) Math.sin(tickRot) * innerTickRadius;
+                float innerY = (float) -Math.cos(tickRot) * innerTickRadius;
+                float outerX = (float) Math.sin(tickRot) * outerTickRadius;
+                float outerY = (float) -Math.cos(tickRot) * outerTickRadius;
+                canvas.drawLine(centerX + innerX, centerY + innerY,
+                        centerX + outerX, centerY + outerY, paint);
+            }
+        }
+
+        private Paint createLinePaint(int color, float strokeWidth, Paint.Cap strokeCap) {
+            Paint paint = new Paint();
+            paint.setColor(color);
+            paint.setStrokeWidth(strokeWidth);
+            paint.setStrokeCap(strokeCap);
+            paint.setAntiAlias(true);
+            return paint;
         }
 
         private Paint createTextPaint(Resources resources, boolean isBold) {

@@ -1,3 +1,8 @@
 <resources>
   <color name="tip_text_color">#3CADD7</color>
+  <color name="hour_bar_color">#191970</color>
+  <color name="minute_bar_color">#191970</color>
+  <color name="second_bar_color">#191970</color>
+  <color name="minute_tick_color">#000000</color>
+  <color name="second_tick_color">#4169E1</color>
 </resources>

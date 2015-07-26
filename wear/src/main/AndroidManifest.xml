@@ -24,6 +24,15 @@
                 android:name="com.google.android.wearable.watchface.preview"
                 android:resource="@drawable/preview" />
 
+            <!-- companion configuration activity -->
+            <!--<meta-data-->
+                <!--android:name="com.google.android.wearable.watchface.companionConfigurationAction"-->
+                <!--android:value="com.huangsz.android.screentip.CONFIG" />-->
+            <!-- wearable configuration activity -->
+            <meta-data
+                android:name="com.google.android.wearable.watchface.wearableConfigurationAction"
+                android:value="com.huangsz.android.screentip.CONFIG" />
+
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />
 
@@ -34,9 +43,20 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.ConfigActivity"
+            android:label="@string/title_activity_config" >
           <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
+            <action android:name=
+                      "com.huangsz.android.screentip.CONFIG" />
+            <category android:name=
+                        "com.google.android.wearable.watchface.category.WEARABLE_CONFIGURATION" />
+            <category android:name="android.intent.category.DEFAULT" />
           </intent-filter>
         </activity>
     </application>

@@ -3,22 +3,36 @@ package com.huangsz.android.screentip.activity;
 import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
 import com.huangsz.android.screentip.R;
 import com.huangsz.android.screentip.widget.ColorChooserDialog;
 
-public class WatchFaceConfigActivity extends ActionBarActivity implements ColorChooserDialog.Listener {
+public class WatchFaceConfigActivity extends ActionBarActivity implements
+        ColorChooserDialog.Listener, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
+
+    private static final String TAG = "WatchFaceConfigActivity";
 
     private static final String TAG_CHARACTER_COLOR = "TAG_CHARACTER_COLOR";
 
     private static final String TAG_TICK_COLOR = "TAG_TICK_COLOR";
 
+    private static final String DATA_LAYER_WATCHFACE_CONFIG_PATH = "/watch_face_config";
+
     private View mConfigCharacterColorPreview;
 
     private View mConfigTickColorPreview;
+
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +57,25 @@ public class WatchFaceConfigActivity extends ActionBarActivity implements ColorC
                     }
                 }
         );
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(Wearable.API)
+                .build();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+        super.onStop();
     }
 
     @Override
@@ -69,10 +102,33 @@ public class WatchFaceConfigActivity extends ActionBarActivity implements ColorC
 
     @Override
     public void onColourSelected(String color, String tag) {
+        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(
+                DATA_LAYER_WATCHFACE_CONFIG_PATH);
         if (TAG_CHARACTER_COLOR.equals(tag)) {
             mConfigCharacterColorPreview.setBackgroundColor(Color.parseColor(color));
+            putDataMapRequest.getDataMap().putString(TAG_CHARACTER_COLOR, color);
         } else if (TAG_TICK_COLOR.equals(tag)) {
             mConfigTickColorPreview.setBackgroundColor(Color.parseColor(color));
+            putDataMapRequest.getDataMap().putString(TAG_TICK_COLOR, color);
         }
+        PutDataRequest putDataRequest = putDataMapRequest.asPutDataRequest();
+        Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest);
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        // Applications should disable UI components that require the service,
+        // and wait for a call to onConnected(Bundle) to re-enable them.
+        Log.e(TAG, "Connection suspended with cause : " + cause);
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }

@@ -64,6 +64,33 @@
         android:layout_alignParentEnd="true" />
 
     </RelativeLayout>
+
+    <RelativeLayout
+      android:id="@+id/configuration_character_text_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@drawable/selector_preference_background"
+      android:paddingTop="16dp"
+      android:paddingBottom="16dp">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:text="@string/watchface_character_text" />
+
+      <TextView
+        android:id="@+id/configuration_character_text_preview"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:gravity="center"
+        android:text="可"
+        android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+
   </LinearLayout>
 
 </RelativeLayout>

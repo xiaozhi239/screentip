@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -14,10 +15,12 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.huangsz.android.screentip.R;
+import com.huangsz.android.screentip.widget.CharacterTipDialog;
 import com.huangsz.android.screentip.widget.ColorChooserDialog;
 
 public class WatchFaceConfigActivity extends ActionBarActivity implements
-        ColorChooserDialog.Listener, GoogleApiClient.ConnectionCallbacks,
+        ColorChooserDialog.Listener, CharacterTipDialog.Listener,
+        GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "WatchFaceConfigActivity";
@@ -26,11 +29,15 @@ public class WatchFaceConfigActivity extends ActionBarActivity implements
 
     private static final String TAG_TICK_COLOR = "TAG_TICK_COLOR";
 
-    private static final String DATA_LAYER_WATCHFACE_CONFIG_PATH = "/watch_face_config";
+    private static final String TAG_CHARACTER_TEXT = "TAG_CHARACTER_TEXT";
+
+    private static final String DATA_LAYER_WATCH_FACE_CONFIG_PATH = "/watch_face_config";
 
     private View mConfigCharacterColorPreview;
 
     private View mConfigTickColorPreview;
+
+    private TextView mConfigCharacterTextPreview;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -40,11 +47,14 @@ public class WatchFaceConfigActivity extends ActionBarActivity implements
         setContentView(R.layout.activity_watch_face_config);
         mConfigCharacterColorPreview = findViewById(R.id.configuration_character_color_preview);
         mConfigTickColorPreview = findViewById(R.id.configuration_ticks_colour_preview);
+        mConfigCharacterTextPreview =
+                (TextView) findViewById(R.id.configuration_character_text_preview);
         findViewById(R.id.configuration_character_colour_layout).setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        new ColorChooserDialog(getString(R.string.watchface_character_color))
+                        ColorChooserDialog.newInstance(
+                                getString(R.string.watchface_character_color))
                                 .show(getFragmentManager(), TAG_CHARACTER_COLOR);
                     }
                 });
@@ -52,8 +62,16 @@ public class WatchFaceConfigActivity extends ActionBarActivity implements
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        new ColorChooserDialog(getString(R.string.watchface_ticks_color))
+                        ColorChooserDialog.newInstance(getString(R.string.watchface_ticks_color))
                                 .show(getFragmentManager(), TAG_TICK_COLOR);
+                    }
+                }
+        );
+        findViewById(R.id.configuration_character_text_layout).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new CharacterTipDialog().show(getFragmentManager(), TAG_CHARACTER_TEXT);
                     }
                 }
         );
@@ -103,7 +121,7 @@ public class WatchFaceConfigActivity extends ActionBarActivity implements
     @Override
     public void onColourSelected(String color, String tag) {
         PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(
-                DATA_LAYER_WATCHFACE_CONFIG_PATH);
+                DATA_LAYER_WATCH_FACE_CONFIG_PATH);
         if (TAG_CHARACTER_COLOR.equals(tag)) {
             mConfigCharacterColorPreview.setBackgroundColor(Color.parseColor(color));
             putDataMapRequest.getDataMap().putString(TAG_CHARACTER_COLOR, color);
@@ -113,6 +131,11 @@ public class WatchFaceConfigActivity extends ActionBarActivity implements
         }
         PutDataRequest putDataRequest = putDataMapRequest.asPutDataRequest();
         Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest);
+    }
+
+    @Override
+    public void onTextChanged(String text) {
+        mConfigCharacterTextPreview.setText(text);
     }
 
     @Override

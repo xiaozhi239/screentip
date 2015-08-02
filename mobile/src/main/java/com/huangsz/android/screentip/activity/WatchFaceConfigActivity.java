@@ -134,8 +134,15 @@ public class WatchFaceConfigActivity extends ActionBarActivity implements
     }
 
     @Override
-    public void onTextChanged(String text) {
-        mConfigCharacterTextPreview.setText(text);
+    public void onTextChanged(String text, String tag) {
+        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(
+                DATA_LAYER_WATCH_FACE_CONFIG_PATH);
+        if (TAG_CHARACTER_TEXT.equals(tag)) {
+            mConfigCharacterTextPreview.setText(text);
+            putDataMapRequest.getDataMap().putString(TAG_CHARACTER_TEXT, text);
+        }
+        PutDataRequest putDataRequest = putDataMapRequest.asPutDataRequest();
+        Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest);
     }
 
     @Override

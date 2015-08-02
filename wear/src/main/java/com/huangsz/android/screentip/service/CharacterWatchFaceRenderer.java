@@ -49,8 +49,7 @@ public class CharacterWatchFaceRenderer {
     private Paint mSecondPaint;
     private Paint mCharacterPaint;  // Paint to show a character as a reminder tip.
 
-    // TODO(huangsz) Receive this from handheld device.
-    private static final String TIP_TEXT = "坚";
+    private String mTipText = "乐";
 
     public CharacterWatchFaceRenderer(Context context) {
         this.mContext = context;
@@ -89,6 +88,10 @@ public class CharacterWatchFaceRenderer {
     public void setTickColor(int color) {
         mMinTickPaint.setColor(color);
         mSecTickPaint.setColor(color);
+    }
+
+    public void setCharacterTip(String text) {
+        mTipText = text;
     }
 
     public void setProperties(boolean lowBitAmbient, boolean burnInProtection) {
@@ -171,7 +174,7 @@ public class CharacterWatchFaceRenderer {
         // Draw the character.
         float charX = centerX;
         float charY = centerY * 1.6f;
-        canvas.drawText(TIP_TEXT, charX, charY, mCharacterPaint);
+        canvas.drawText(mTipText, charX, charY, mCharacterPaint);
     }
 
     private void drawTicks(Canvas canvas, float centerX, float centerY,

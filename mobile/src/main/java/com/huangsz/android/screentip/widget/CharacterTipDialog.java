@@ -36,7 +36,7 @@ public class CharacterTipDialog extends DialogFragment {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mTextChangedListener.onTextChanged(input.getText().toString());
+                mTextChangedListener.onTextChanged(input.getText().toString(), getTag());
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -49,6 +49,6 @@ public class CharacterTipDialog extends DialogFragment {
     }
 
     public interface Listener {
-        void onTextChanged(String text);
+        void onTextChanged(String text, String tag);
     }
 }

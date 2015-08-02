@@ -52,6 +52,9 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
         // Keep the same with {@link WatchFaceConfigActivity} in handheld app.
         private static final String TAG_TICK_COLOR = "TAG_TICK_COLOR";
 
+        // Keep the same with {@link WatchFaceConfigActivity} in handheld app.
+        private static final String TAG_CHARACTER_TEXT = "TAG_CHARACTER_TEXT";
+
         private static final int MSG_UPDATE_TIME = 0;
 
         private static final int INTERACTIVE_UPDATE_RATE_MS = 1000;
@@ -131,6 +134,10 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
                 if (dataMap.containsKey(TAG_TICK_COLOR)) {
                     String color = dataMap.getString(TAG_TICK_COLOR);
                     mWatchFaceRenderer.setTickColor(Color.parseColor(color));
+                }
+                if (dataMap.containsKey(TAG_CHARACTER_TEXT)) {
+                    String text = dataMap.getString(TAG_CHARACTER_TEXT);
+                    mWatchFaceRenderer.setCharacterTip(text);
                 }
             }
         }

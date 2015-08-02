@@ -25,13 +25,13 @@
                 android:resource="@drawable/preview" />
 
             <!-- companion configuration activity -->
-            <!--<meta-data-->
-                <!--android:name="com.google.android.wearable.watchface.companionConfigurationAction"-->
-                <!--android:value="com.huangsz.android.screentip.CONFIG" />-->
-            <!-- wearable configuration activity -->
             <meta-data
-                android:name="com.google.android.wearable.watchface.wearableConfigurationAction"
+                android:name="com.google.android.wearable.watchface.companionConfigurationAction"
                 android:value="com.huangsz.android.screentip.CONFIG" />
+            <!-- wearable configuration activity -->
+            <!--<meta-data-->
+                <!--android:name="com.google.android.wearable.watchface.wearableConfigurationAction"-->
+                <!--android:value="com.huangsz.android.screentip.CONFIG" />-->
 
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />

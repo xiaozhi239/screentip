@@ -65,7 +65,7 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
         private Paint mCharacterPaint;  // Paint to show a character as a reminder tip.
 
         // TODO(huangsz) Receive this from handheld device.
-        private static final String TIP_TEXT = "宝";
+        private static final String TIP_TEXT = "坚";
 
         /**
          * handler to update the time once a second in interactive mode

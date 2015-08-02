@@ -10,13 +10,33 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+        <!-- Wearable Data Layer API which is part of Google Play services -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
-          <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-          </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.WatchFaceConfigActivity"
+            android:label="@string/title_activity_watch_face_config" >
+            <intent-filter>
+                <action android:name="com.huangsz.android.screentip.CONFIG" />
+                <category android:name="com.google.android.wearable.watchface.category.COMPANION_CONFIGURATION" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <!--<meta-data-->
+            <!--android:name="com.google.android.wearable.watchface.companionConfigurationAction"-->
+            <!--android:value="com.huangsz.android.screentip.CONFIG" />-->
         </activity>
     </application>
 

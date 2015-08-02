@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -17,14 +18,28 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
+import android.util.Log;
 import android.view.SurfaceHolder;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataItemBuffer;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.Wearable;
 import com.huangsz.android.screentip.R;
 
 import java.util.Calendar;
 import java.util.TimeZone;
 
 public class CharacterWatchFaceService extends CanvasWatchFaceService {
+
+    private static final String TAG = "CharWatchFaceService";
 
     private static final Typeface BOLD_TYPEFACE =
             Typeface.create(Typeface.SERIF, Typeface.BOLD);
@@ -38,10 +53,20 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
     }
 
     /* implement service callback methods */
-    private class Engine extends CanvasWatchFaceService.Engine {
+    private class Engine extends CanvasWatchFaceService.Engine implements
+            GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
         // Constant to help calculate clock hand rotations
         private static final float TWO_PI = (float) Math.PI * 2f;
+
+        // Keep the same with {@link WatchFaceConfigActivity} in handheld app.
+        private static final String DATA_LAYER_WATCHFACE_CONFIG_PATH = "/watch_face_config";
+
+        // Keep the same with {@link WatchFaceConfigActivity} in handheld app.
+        private static final String TAG_CHARACTER_COLOR = "TAG_CHARACTER_COLOR";
+
+        // Keep the same with {@link WatchFaceConfigActivity} in handheld app.
+        private static final String TAG_TICK_COLOR = "TAG_TICK_COLOR";
 
         private static final int MSG_UPDATE_TIME = 0;
 
@@ -63,6 +88,8 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
         private Paint mMinutePaint;
         private Paint mSecondPaint;
         private Paint mCharacterPaint;  // Paint to show a character as a reminder tip.
+
+        private GoogleApiClient mGoogleApiClient;
 
         // TODO(huangsz) Receive this from handheld device.
         private static final String TIP_TEXT = "坚";
@@ -98,6 +125,49 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
                 invalidate();
             }
         };
+
+        final DataApi.DataListener mOnDataListener = new DataApi.DataListener() {
+            @Override
+            public void onDataChanged(DataEventBuffer dataEvents) {
+                for (DataEvent event : dataEvents) {
+                    if (event.getType() == DataEvent.TYPE_CHANGED) {
+                        DataItem item = event.getDataItem();
+                        processConfigurationFor(item);
+                    }
+                }
+
+                dataEvents.release();
+                invalidate();
+            }
+        };
+
+        private final ResultCallback<DataItemBuffer> mOnConnectedResultCallback =
+                new ResultCallback<DataItemBuffer>() {
+                    // This is only notified when the service is firstly connected.
+                    @Override
+                    public void onResult(DataItemBuffer dataItems) {
+                        for (DataItem item : dataItems) {
+                            processConfigurationFor(item);
+                        }
+                        dataItems.release();
+                        invalidate();
+                    }
+                };
+
+        private void processConfigurationFor(DataItem item) {
+            if (DATA_LAYER_WATCHFACE_CONFIG_PATH.equals(item.getUri().getPath())) {
+                DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                if (dataMap.containsKey(TAG_CHARACTER_COLOR)) {
+                    String color = dataMap.getString(TAG_CHARACTER_COLOR);
+                    mCharacterPaint.setColor(Color.parseColor(color));
+                }
+                if (dataMap.containsKey(TAG_TICK_COLOR)) {
+                    String color = dataMap.getString(TAG_TICK_COLOR);
+                    mMinTickPaint.setColor(Color.parseColor(color));
+                }
+            }
+        }
+
 
         @Override
         public void onCreate(SurfaceHolder holder) {
@@ -135,6 +205,12 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
 
             // allocate a Calendar to calculate local time using the UTC time and time zone
             mCalendar = Calendar.getInstance();
+
+            mGoogleApiClient = new GoogleApiClient.Builder(CharacterWatchFaceService.this)
+                    .addApi(Wearable.API)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
         }
 
         @Override
@@ -170,6 +246,7 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
                 mMinTickPaint.setAntiAlias(antiAlias);
                 mCharacterPaint.setAntiAlias(antiAlias);
             }
+            // TODO(huangsz) restore to black and white.
             invalidate();
             updateTimer();
         }
@@ -236,8 +313,10 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
             super.onVisibilityChanged(visible);
             if (visible) {
                 maybeRegisterTimeZoneReceiver();
+                maybeConnectGoogleApi();
             } else {
                 maybeUnRegisterTimeZoneReceiver();
+                maybeDisconnectGoogleApi();
             }
             updateTimer();
         }
@@ -253,6 +332,30 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
                         width, height, true /* filter */);
             }
             super.onSurfaceChanged(holder, format, width, height);
+        }
+
+        @Override
+        public void onDestroy() {
+            maybeDisconnectGoogleApi();
+            super.onDestroy();
+        }
+
+        @Override
+        public void onConnected(Bundle bundle) {
+            Log.i(TAG, "GoogleApiClient connected.");
+            Wearable.DataApi.addListener(mGoogleApiClient, mOnDataListener);
+            Wearable.DataApi.getDataItems(mGoogleApiClient).setResultCallback(
+                    mOnConnectedResultCallback);
+        }
+
+        @Override
+        public void onConnectionSuspended(int i) {
+
+        }
+
+        @Override
+        public void onConnectionFailed(ConnectionResult connectionResult) {
+
         }
 
         private void drawTicks(Canvas canvas, float centerX, float centerY,
@@ -305,6 +408,19 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
             }
             mTimeZoneReceiverRegistered = false;
             CharacterWatchFaceService.this.unregisterReceiver(mTimeZoneReceiver);
+        }
+
+        private void maybeConnectGoogleApi() {
+            if (mGoogleApiClient != null && !mGoogleApiClient.isConnected()) {
+                mGoogleApiClient.connect();
+            }
+        }
+
+        private void maybeDisconnectGoogleApi() {
+            if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                Wearable.DataApi.removeListener(mGoogleApiClient, mOnDataListener);
+                mGoogleApiClient.disconnect();
+            }
         }
 
         private void updateTimer() {

@@ -86,7 +86,23 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:gravity="center"
-        android:text="可"
+        android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@drawable/selector_preference_background"
+      android:paddingTop="16dp"
+      android:paddingBottom="16dp">
+
+      <Button
+        android:id="@+id/configuration_update_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/text_update_config"
         android:layout_alignParentEnd="true" />
 
     </RelativeLayout>

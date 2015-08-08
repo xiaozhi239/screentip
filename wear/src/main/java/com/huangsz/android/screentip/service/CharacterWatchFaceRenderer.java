@@ -18,7 +18,7 @@ import java.util.TimeZone;
 /**
  * Responsible for the drawing of character watch face.
  */
-public class CharacterWatchFaceRenderer {
+class CharacterWatchFaceRenderer {
 
     // Text paint typefaces.
     private static final Typeface BOLD_TYPEFACE =
@@ -51,7 +51,7 @@ public class CharacterWatchFaceRenderer {
 
     private String mTipText = "乐";
 
-    public CharacterWatchFaceRenderer(Context context) {
+    CharacterWatchFaceRenderer(Context context) {
         this.mContext = context;
 
         // load the background image

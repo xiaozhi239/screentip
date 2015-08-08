@@ -8,4 +8,6 @@
   <string name="watchface_character_color">Watch Face Character Color</string>
   <string name="watchface_ticks_color">Watch Face Ticks Color</string>
   <string name="watchface_character_text">Watch Face Character Text</string>
+
+  <string name="text_update_config">Update Configuration</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.huangsz.android.screentip.service;
+package com.huangsz.android.screentip.face;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -9,7 +9,6 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import com.huangsz.android.screentip.R;
 

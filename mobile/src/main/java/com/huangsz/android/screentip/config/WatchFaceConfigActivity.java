@@ -1,15 +1,11 @@
-package com.huangsz.android.screentip.activity;
+package com.huangsz.android.screentip.config;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,15 +13,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.wearable.Asset;
 import com.huangsz.android.screentip.R;
 import com.huangsz.android.screentip.utils.ImageUtils;
 import com.huangsz.android.screentip.widget.CharacterTipDialog;
 import com.huangsz.android.screentip.widget.ColorChooserDialog;
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 public class WatchFaceConfigActivity extends ActionBarActivity implements
         ColorChooserDialog.Listener, CharacterTipDialog.Listener {

@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.WatchFaceConfigActivity"
+            android:name=".config.WatchFaceConfigActivity"
             android:label="@string/title_activity_watch_face_config" >
             <intent-filter>
                 <action android:name="com.huangsz.android.screentip.CONFIG" />

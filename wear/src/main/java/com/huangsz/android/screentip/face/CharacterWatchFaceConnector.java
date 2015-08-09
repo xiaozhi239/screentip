@@ -1,4 +1,4 @@
-package com.huangsz.android.screentip.service;
+package com.huangsz.android.screentip.face;
 
 import android.content.Context;
 import android.graphics.Bitmap;

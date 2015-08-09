@@ -1,9 +1,7 @@
-package com.huangsz.android.screentip.activity;
+package com.huangsz.android.screentip.config;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.huangsz.android.screentip.R;
 

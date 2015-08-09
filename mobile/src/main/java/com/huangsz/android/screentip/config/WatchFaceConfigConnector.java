@@ -1,8 +1,7 @@
-package com.huangsz.android.screentip.activity;
+package com.huangsz.android.screentip.config;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 

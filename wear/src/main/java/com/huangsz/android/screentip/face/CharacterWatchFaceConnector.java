@@ -2,9 +2,7 @@ package com.huangsz.android.screentip.face;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -20,9 +18,7 @@ import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Wearable;
-
-import java.io.InputStream;
-import java.util.concurrent.TimeUnit;
+import com.huangsz.android.screentip.common.data.LoadBitmapAsyncTask;
 
 /**
  * Responsible for the watch face related connection and data syncing between wear and handheld.
@@ -47,11 +43,17 @@ class CharacterWatchFaceConnector implements
     // Keep the same with {@link WatchFaceConfigActivity} in handheld app.
     private static final String KEY_BACKGROUND_IMG = "KEY_BACKGROUND_IMG";
 
-    private static final long TIMEOUT_BLOCKING_ASSET_MS = 3000;
-
     private GoogleApiClient mGoogleApiClient;
 
     private CharacterWatchFaceRenderer mWatchFaceRenderer;
+
+    private LoadBitmapAsyncTask.PostExecuteCallback mLoadBitmapCompleteCallback =
+            new LoadBitmapAsyncTask.PostExecuteCallback() {
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap) {
+            mWatchFaceRenderer.setBackgroundImage(bitmap);
+        }
+    };
 
     public CharacterWatchFaceConnector(Context context,
                                        CharacterWatchFaceRenderer watchFaceRenderer) {
@@ -107,7 +109,8 @@ class CharacterWatchFaceConnector implements
             }
             if (dataMap.containsKey(KEY_BACKGROUND_IMG)) {
                 Asset asset = dataMap.getAsset(KEY_BACKGROUND_IMG);
-                new LoadBitMapAsyncTask(mGoogleApiClient).execute(asset);
+                new LoadBitmapAsyncTask(
+                        mGoogleApiClient, mLoadBitmapCompleteCallback).execute(asset);
             }
         }
     }
@@ -141,49 +144,6 @@ class CharacterWatchFaceConnector implements
             Log.i(TAG, "GoogleApiClient disconnect");
             Wearable.DataApi.removeListener(mGoogleApiClient, mOnDataListener);
             mGoogleApiClient.disconnect();
-        }
-    }
-
-    // TODO(huangsz) Move this to utils, add a callback extending Function in the postexecute.
-    private final class LoadBitMapAsyncTask extends AsyncTask<Asset, Void, Bitmap> {
-
-        private GoogleApiClient googleApiClient;
-
-        public LoadBitMapAsyncTask(GoogleApiClient googleApiClient) {
-            this.googleApiClient = googleApiClient;
-        }
-
-        @Override
-        protected Bitmap doInBackground(Asset... params) {
-            Asset asset = params[0];
-            if (asset == null) {
-                throw new IllegalArgumentException("Asset must be non-null");
-            }
-            if (googleApiClient == null || !googleApiClient.isConnected()) {
-                return null;
-            }
-
-            ConnectionResult result =
-                    googleApiClient.blockingConnect(
-                            TIMEOUT_BLOCKING_ASSET_MS, TimeUnit.MILLISECONDS);
-            if (!result.isSuccess()) {
-                return null;
-            }
-            // convert asset into a file descriptor and block until it's ready
-            InputStream assetInputStream = Wearable.DataApi.getFdForAsset(
-                    googleApiClient, asset).await().getInputStream();
-
-            if (assetInputStream == null) {
-                Log.w(TAG, "Requested an unknown Asset.");
-                return null;
-            }
-            // decode the stream into a bitmap
-            return BitmapFactory.decodeStream(assetInputStream);
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            mWatchFaceRenderer.setBackgroundImage(bitmap);
         }
     }
 }

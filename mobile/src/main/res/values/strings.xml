@@ -10,4 +10,7 @@
   <string name="watchface_character_text">Watch Face Character Text</string>
 
   <string name="text_update_config">Update Configuration</string>
+  <string name="title_activity_tutorial">Welcome</string>
+
+  <string name="hello_world">Hello world!</string>
 </resources>

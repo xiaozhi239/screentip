@@ -1,5 +1,6 @@
 package com.huangsz.android.screentip.tutorial;
 
+import android.content.Intent;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
@@ -7,9 +8,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.huangsz.android.screentip.R;
+import com.huangsz.android.screentip.config.WatchFaceConfigActivity;
+import com.huangsz.android.screentip.data.PreferenceHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,19 +28,25 @@ public class TutorialActivity extends ActionBarActivity {
 
     private List<ImageView> mNavigationDots;
 
+    private Button mStartButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutorial);
+        // TODO(huangsz) Simplify this, there is no need to launch this activity at all.
+        if (PreferenceHelper.isTutorialPresented(this)) {
+            startConfigActivity();
+        }
         mViewPager = (ViewPager) findViewById(R.id.tutorial_viewpager);
         mDotsViewGroup = (ViewGroup) findViewById(R.id.tutorial_dots_viewgroup);
         setUpViewPageItems();
-        setUpDots(mViewPageItems.size());
+        setUpNavigationDots(mViewPageItems.size());
         mViewPager.setAdapter(new ViewPagerAdapter());
         mViewPager.setOnPageChangeListener(new ViewPageChangeListener());
     }
 
-    private void setUpDots(int size) {
+    private void setUpNavigationDots(int size) {
         mNavigationDots = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             ImageView imageView = new ImageView(this);
@@ -58,7 +68,27 @@ public class TutorialActivity extends ActionBarActivity {
         LayoutInflater inflater = getLayoutInflater();
         mViewPageItems.add(inflater.inflate(R.layout.view_tutorial_page1_intro, null));
         mViewPageItems.add(inflater.inflate(R.layout.view_tutorial_page2_setup, null));
-        mViewPageItems.add(inflater.inflate(R.layout.view_tutorial_page3_start, null));
+
+        View view = inflater.inflate(R.layout.view_tutorial_page3_start, null);
+        mViewPageItems.add(view);
+        mStartButton = (Button) view.findViewById(R.id.tutorial_start_btn);
+        mStartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onStartButtonPressed();
+            }
+        });
+    }
+
+    private void onStartButtonPressed() {
+        PreferenceHelper.setTutorialPresented(this, true);
+        startConfigActivity();
+    }
+
+    private void startConfigActivity() {
+        Intent intent = new Intent(TutorialActivity.this, WatchFaceConfigActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     // http://www.apkbus.com/android-25078-1-1.html

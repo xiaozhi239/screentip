@@ -2,6 +2,7 @@
   <string name="app_name">ScreenTip</string>
   <string name="title_activity_main">MainActivity</string>
   <string name="title_activity_watch_face_config">Watch Face Configuration</string>
+  <string name="title_activity_tutorial">Welcome</string>
 
   <string name="action_settings">Settings</string>
 
@@ -10,7 +11,7 @@
   <string name="watchface_character_text">Watch Face Character Text</string>
 
   <string name="text_update_config">Update Configuration</string>
-  <string name="title_activity_tutorial">Welcome</string>
+  <string name="text_start_journey">Start</string>
 
   <string name="hello_world">Hello world!</string>
 </resources>

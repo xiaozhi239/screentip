@@ -1,26 +1,44 @@
 package com.huangsz.android.screentip.activity;
 
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.wearable.Asset;
 import com.huangsz.android.screentip.R;
+import com.huangsz.android.screentip.utils.ImageUtils;
 import com.huangsz.android.screentip.widget.CharacterTipDialog;
 import com.huangsz.android.screentip.widget.ColorChooserDialog;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
 public class WatchFaceConfigActivity extends ActionBarActivity implements
         ColorChooserDialog.Listener, CharacterTipDialog.Listener {
+
+    private static final String TAG = "WatchFaceConfigActivity";
 
     private static final String TAG_CHARACTER_COLOR = "TAG_CHARACTER_COLOR";
 
     private static final String TAG_TICK_COLOR = "TAG_TICK_COLOR";
 
     private static final String TAG_CHARACTER_TEXT = "TAG_CHARACTER_TEXT";
+
+    private static final int CODE_SELECT_BACKGROUND_PICTURE = 0;
 
     private View mConfigCharacterColorPreview;
 
@@ -29,6 +47,8 @@ public class WatchFaceConfigActivity extends ActionBarActivity implements
     private TextView mConfigCharacterTextPreview;
 
     private Button mUpdateConfigButton;
+
+    private ImageView mBackgroundImageView;
 
     private WatchFaceConfigConnector mWatchFaceConfigConnector;
 
@@ -41,6 +61,7 @@ public class WatchFaceConfigActivity extends ActionBarActivity implements
         mConfigCharacterTextPreview =
                 (TextView) findViewById(R.id.configuration_character_text_preview);
         mUpdateConfigButton = (Button) findViewById(R.id.configuration_update_button);
+        mBackgroundImageView = (ImageView) findViewById(R.id.configuration_background);
         mWatchFaceConfigConnector = new WatchFaceConfigConnector(this);
         findViewById(R.id.configuration_character_colour_layout).setOnClickListener(
                 new View.OnClickListener() {
@@ -68,6 +89,17 @@ public class WatchFaceConfigActivity extends ActionBarActivity implements
                     }
                 }
         );
+        mBackgroundImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Select a picture.
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Pictures"),
+                        CODE_SELECT_BACKGROUND_PICTURE);
+            }
+        });
         mUpdateConfigButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,6 +140,19 @@ public class WatchFaceConfigActivity extends ActionBarActivity implements
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == CODE_SELECT_BACKGROUND_PICTURE) {
+            Uri selectedImageUri = data.getData();
+            Bitmap bitmap = ImageUtils.createScaledBitmap(
+                    selectedImageUri, mBackgroundImageView.getWidth(),
+                    mBackgroundImageView.getHeight(), this);
+            mWatchFaceConfigConnector.setBackgroundImage(bitmap);
+            mBackgroundImageView.setImageBitmap(bitmap);
+        }
     }
 
     @Override

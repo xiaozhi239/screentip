@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import com.huangsz.android.screentip.R;
 
@@ -92,6 +93,15 @@ class CharacterWatchFaceRenderer {
 
     public void setCharacterTip(String text) {
         mTipText = text;
+    }
+
+    public void setBackgroundImage(Bitmap image) {
+        int width = mBackgroundScaledBitmap.getWidth();
+        int height = mBackgroundScaledBitmap.getHeight();
+        Log.i("huangsz", String.format("set background width and height: %d, %d", width, height));
+        mBackgroundBitmap = image;
+        mBackgroundScaledBitmap = Bitmap.createScaledBitmap(mBackgroundBitmap,
+                width, height, true /* filter */);
     }
 
     public void setProperties(boolean lowBitAmbient, boolean burnInProtection) {

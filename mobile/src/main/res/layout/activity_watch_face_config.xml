@@ -90,6 +90,11 @@
 
     </RelativeLayout>
 
+    <ImageView
+      android:id="@+id/configuration_background"
+      android:layout_width="200dp"
+      android:layout_height="200dp"/>
+
     <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"

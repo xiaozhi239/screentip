@@ -32,6 +32,8 @@ class CharacterWatchFaceRenderer {
 
     private Context mContext;
 
+    private UpdateWatchFaceCallback mUpdateWatchFaceCallback;
+
     private Calendar mCalendar;
 
     private boolean mIsInAmbientMode;
@@ -52,8 +54,9 @@ class CharacterWatchFaceRenderer {
 
     private String mTipText = "乐";
 
-    CharacterWatchFaceRenderer(Context context) {
-        this.mContext = context;
+    CharacterWatchFaceRenderer(Context context, UpdateWatchFaceCallback updateWatchFaceCallback) {
+        mContext = context;
+        mUpdateWatchFaceCallback = updateWatchFaceCallback;
 
         // load the background image
         Resources resources = mContext.getResources();
@@ -98,10 +101,13 @@ class CharacterWatchFaceRenderer {
     public void setBackgroundImage(Bitmap image) {
         int width = mBackgroundScaledBitmap.getWidth();
         int height = mBackgroundScaledBitmap.getHeight();
-        Log.i("huangsz", String.format("set background width and height: %d, %d", width, height));
         mBackgroundBitmap = image;
         mBackgroundScaledBitmap = Bitmap.createScaledBitmap(mBackgroundBitmap,
                 width, height, true /* filter */);
+    }
+
+    public void updateWatchFace() {
+        mUpdateWatchFaceCallback.updateWatchFace();
     }
 
     public void setProperties(boolean lowBitAmbient, boolean burnInProtection) {
@@ -220,5 +226,9 @@ class CharacterWatchFaceRenderer {
         paint.setTextSize(resources.getDimension(R.dimen.tip_text_size));
         paint.setColor(resources.getColor(R.color.tip_text_color));
         return paint;
+    }
+
+    interface UpdateWatchFaceCallback {
+        public void updateWatchFace();
     }
 }

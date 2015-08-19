@@ -66,6 +66,30 @@
     </RelativeLayout>
 
     <RelativeLayout
+      android:id="@+id/configuration_hands_colour_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@drawable/selector_preference_background"
+      android:paddingTop="16dp"
+      android:paddingBottom="16dp">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:text="@string/watchface_hands_color" />
+
+      <View
+        android:id="@+id/configuration_hands_colour_preview"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
       android:id="@+id/configuration_character_text_layout"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -92,6 +116,7 @@
 
     <ImageView
       android:id="@+id/configuration_background"
+      android:src="@drawable/default_bg"
       android:layout_width="200dp"
       android:layout_height="200dp"/>
 

@@ -11,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 import com.huangsz.android.screentip.R;
+import com.huangsz.android.screentip.feature.FLAGS;
 
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -51,7 +52,7 @@ class CharacterWatchFaceRenderer {
     private Paint mSecondPaint;
     private Paint mCharacterPaint;  // Paint to show a character as a reminder tip.
 
-    private String mTipText = "乐";
+    private String mTipText = "宝";
 
     CharacterWatchFaceRenderer(Context context, UpdateWatchFaceCallback updateWatchFaceCallback) {
         mContext = context;
@@ -91,6 +92,12 @@ class CharacterWatchFaceRenderer {
     public void setTickColor(int color) {
         mMinTickPaint.setColor(color);
         mSecTickPaint.setColor(color);
+    }
+
+    public void setHandColor(int color) {
+        mHourPaint.setColor(color);
+        mMinutePaint.setColor(color);
+        mSecondPaint.setColor(color);
     }
 
     public void setCharacterTip(String text) {
@@ -186,10 +193,12 @@ class CharacterWatchFaceRenderer {
         canvas.drawLine(centerX, centerY, centerX + hrX, centerY + hrY,
                 mHourPaint);
 
-        // Draw the character.
-        float charX = centerX;
-        float charY = centerY * 1.6f;
-        canvas.drawText(mTipText, charX, charY, mCharacterPaint);
+        if (FLAGS.SCREEN_CHARACTER) {
+            // Draw the character.
+            float charX = centerX;
+            float charY = centerY * 1.6f;
+            canvas.drawText(mTipText, charX, charY, mCharacterPaint);
+        }
     }
 
     private void drawTicks(Canvas canvas, float centerX, float centerY,

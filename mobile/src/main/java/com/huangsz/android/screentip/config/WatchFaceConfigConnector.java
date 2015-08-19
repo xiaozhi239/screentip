@@ -28,6 +28,8 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
 
     private static final String KEY_TICK_COLOR = "KEY_TICK_COLOR";
 
+    private static final String KEY_HAND_COLOR = "KEY_HAND_COLOR";
+
     private static final String KEY_CHARACTER_TEXT = "KEY_CHARACTER_TEXT";
 
     private static final String KEY_BACKGROUND_IMG = "KEY_BACKGROUND_IMG";
@@ -39,6 +41,8 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
     private String mCharacterText = null;
 
     private String mTickColor = null;
+
+    private String mHandColor = null;
 
     private Bitmap mBackgroundImage = null;
 
@@ -80,6 +84,9 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
         if (mTickColor != null) {
             putDataMapRequest.getDataMap().putString(KEY_TICK_COLOR, mTickColor);
         }
+        if (mHandColor != null) {
+            putDataMapRequest.getDataMap().putString(KEY_HAND_COLOR, mHandColor);
+        }
         if (mBackgroundImage != null) {
             Asset asset = compressAndCreateAssetFromImageUri(mBackgroundImage);
             if (asset != null) {
@@ -99,13 +106,14 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
 
     private boolean configChanged() {
         return mCharacterText != null || mCharacterColor != null || mTickColor != null
-                || mBackgroundImage != null;
+                || mHandColor != null || mBackgroundImage != null;
     }
 
     private void resetConfig() {
         mCharacterText = null;
         mCharacterColor = null;
         mTickColor = null;
+        mHandColor = null;
         mBackgroundImage = null;
     }
 
@@ -136,6 +144,10 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
 
     public void setTickColor(String mTickColor) {
         this.mTickColor = mTickColor;
+    }
+
+    public void setHandColor(String mHandColor) {
+        this.mHandColor = mHandColor;
     }
 
     public void setBackgroundImage(Bitmap backgroundImage) {

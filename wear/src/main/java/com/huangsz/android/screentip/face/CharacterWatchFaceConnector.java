@@ -38,6 +38,9 @@ class CharacterWatchFaceConnector implements
     private static final String KEY_TICK_COLOR = "KEY_TICK_COLOR";
 
     // Keep the same with {@link WatchFaceConfigActivity} in handheld app.
+    private static final String KEY_HAND_COLOR = "KEY_HAND_COLOR";
+
+    // Keep the same with {@link WatchFaceConfigActivity} in handheld app.
     private static final String KEY_CHARACTER_TEXT = "KEY_CHARACTER_TEXT";
 
     // Keep the same with {@link WatchFaceConfigActivity} in handheld app.
@@ -102,6 +105,10 @@ class CharacterWatchFaceConnector implements
             if (dataMap.containsKey(KEY_TICK_COLOR)) {
                 String color = dataMap.getString(KEY_TICK_COLOR);
                 mWatchFaceRenderer.setTickColor(Color.parseColor(color));
+            }
+            if (dataMap.containsKey(KEY_HAND_COLOR)) {
+                String color = dataMap.getString(KEY_HAND_COLOR);
+                mWatchFaceRenderer.setHandColor(Color.parseColor(color));
             }
             if (dataMap.containsKey(KEY_CHARACTER_TEXT)) {
                 String text = dataMap.getString(KEY_CHARACTER_TEXT);

@@ -1,8 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:orientation="vertical"
-              android:background="@drawable/tutorial_setup">
+              android:background="@drawable/tutorial_background">
 
-</LinearLayout>
+  <LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:orientation="vertical">
+
+    <ImageView
+      android:layout_width="200dp"
+      android:layout_height="200dp"
+      android:layout_gravity="center_horizontal"
+      android:src="@drawable/tutorial_setup_face"/>
+
+    <TextView
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:padding="15dp"
+      android:text="@string/text_tutorial_setup_description"/>
+
+  </LinearLayout>
+
+
+</RelativeLayout>

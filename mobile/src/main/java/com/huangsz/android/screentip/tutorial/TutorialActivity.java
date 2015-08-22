@@ -1,5 +1,6 @@
 package com.huangsz.android.screentip.tutorial;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -18,7 +19,7 @@ import com.huangsz.android.screentip.data.PreferenceHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TutorialActivity extends ActionBarActivity {
+public class TutorialActivity extends Activity {
 
     private ViewPager mViewPager;
 

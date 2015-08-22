@@ -15,5 +15,8 @@
   <string name="text_update_config">Update Configuration</string>
   <string name="text_start_journey">Start</string>
 
+  <string name="text_tutorial_setup_description">Long press your watch face on the home screen till
+    it shows the watch face picker. Select WoFace and wait for it to be presented.</string>
+
   <string name="hello_world">Hello world!</string>
 </resources>

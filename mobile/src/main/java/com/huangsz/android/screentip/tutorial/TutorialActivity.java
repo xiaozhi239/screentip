@@ -53,11 +53,9 @@ public class TutorialActivity extends Activity {
             ImageView imageView = new ImageView(this);
             imageView.setLayoutParams(new ViewGroup.LayoutParams(25,25));
             imageView.setPadding(10, 0, 10, 0);
-            if (i == 0) {
-                // select first one by default.
-                imageView.setBackgroundResource(R.drawable.icon_dot_white);
-            } else {
-                imageView.setBackgroundResource(R.drawable.icon_dot_black);
+            imageView.setBackgroundResource(R.drawable.icon_dot_black);
+            if (i != 0) {
+                imageView.setVisibility(View.INVISIBLE);
             }
             mNavigationDots.add(imageView);
             mDotsViewGroup.addView(imageView);
@@ -123,13 +121,11 @@ public class TutorialActivity extends Activity {
 
         @Override
         public void onPageSelected(int position) {
-            // TODO(huangsz) Improve this.
             mNavigationDots.get(position)
-                    .setBackgroundResource(R.drawable.icon_dot_white);
+                    .setVisibility(View.VISIBLE);
             for (int i = 0; i < mNavigationDots.size(); i++) {
                 if (position != i) {
-                    mNavigationDots.get(i)
-                            .setBackgroundResource(R.drawable.icon_dot_black);
+                    mNavigationDots.get(i).setVisibility(View.INVISIBLE);
                 }
             }
         }

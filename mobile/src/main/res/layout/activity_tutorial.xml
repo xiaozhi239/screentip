@@ -14,14 +14,16 @@
   <RelativeLayout
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
 
     <LinearLayout
       android:id="@+id/tutorial_dots_viewgroup"
-      android:layout_width="fill_parent"
+      android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
       android:layout_marginBottom="30dp"
+      android:background="@color/tutorial_button_text"
       android:gravity="center_horizontal"
       android:orientation="horizontal" >
     </LinearLayout>

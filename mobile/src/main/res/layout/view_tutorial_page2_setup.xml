@@ -23,6 +23,15 @@
       android:padding="15dp"
       android:text="@string/text_tutorial_setup_description"/>
 
+    <Button
+      android:id="@+id/tutorial_start_btn"
+      android:text="@string/text_start_journey"
+      android:layout_gravity="center_horizontal"
+      style="@style/TutorialStartButtonTheme"
+      android:layout_marginTop="30dp"
+      android:layout_width="200dp"
+      android:layout_height="50dp"/>
+
   </LinearLayout>
 
 

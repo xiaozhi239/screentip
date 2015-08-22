@@ -68,9 +68,8 @@ public class TutorialActivity extends Activity {
         mViewPageItems = new ArrayList<>();
         LayoutInflater inflater = getLayoutInflater();
         mViewPageItems.add(inflater.inflate(R.layout.view_tutorial_page1_intro, null));
-        mViewPageItems.add(inflater.inflate(R.layout.view_tutorial_page2_setup, null));
 
-        View view = inflater.inflate(R.layout.view_tutorial_page3_start, null);
+        View view = inflater.inflate(R.layout.view_tutorial_page2_setup, null);
         mViewPageItems.add(view);
         mStartButton = (Button) view.findViewById(R.id.tutorial_start_btn);
         mStartButton.setOnClickListener(new View.OnClickListener() {

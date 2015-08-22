@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <color name="preference_pressed">#55CCCCCC</color>
+  <color name="tutorial_button_background">#00ABFF</color>
+  <color name="tutorial_button_background_pressed">#0836ED</color>
+  <color name="tutorial_button_text">#FFFFFF</color>
+  <color name="tutorial_button_stroke">#FFFFFF</color>
 </resources>

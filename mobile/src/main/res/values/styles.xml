@@ -2,7 +2,14 @@
 
   <!-- Base application theme. -->
   <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-    <!-- Customize your theme here. -->
+  </style>
+
+  <style name="TutorialStartButtonTheme" parent="@android:style/Widget.Button">
+    <item name="android:textSize">16sp</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:textColor">@color/tutorial_button_text</item>
+    <item name="android:gravity">center</item>
+    <item name="android:background">@drawable/selector_tutorial_start_button_background</item>
   </style>
 
 </resources>

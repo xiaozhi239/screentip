@@ -13,10 +13,12 @@
   <string name="watchface_character_text">Watch Face Character Text</string>
 
   <string name="text_update_config">Update Configuration</string>
-  <string name="text_start_journey">Start</string>
+  <string name="text_start_journey">S t a r t</string>
 
   <string name="text_tutorial_setup_description">Long press your watch face on the home screen till
-    it shows the watch face picker. Select WoFace and wait for it to be presented.</string>
+    it shows the watch face picker. Select WoFace and wait for it to be presented.
+    \nThen from your paired phone, you can use WoFace to customize your watch face. Put your
+    girlfriend\'s picture as your watch face!</string>
 
   <string name="hello_world">Hello world!</string>
 </resources>

@@ -100,7 +100,7 @@ class CharacterWatchFaceRenderer {
         mSecondPaint.setColor(color);
     }
 
-    public void setCharacterTip(String text) {
+    public void setText(String text) {
         mTipText = text;
     }
 

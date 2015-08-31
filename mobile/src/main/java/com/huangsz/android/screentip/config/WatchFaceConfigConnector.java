@@ -2,6 +2,8 @@ package com.huangsz.android.screentip.config;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.huangsz.com.screentip.connect.ConnectManager;
+import android.huangsz.com.screentip.connect.model.ConfigModel;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -22,25 +24,11 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
 
     private static final String TAG = "WFConfigConnector";
 
-    private static final String DATA_LAYER_WATCH_FACE_CONFIG_PATH = "/watch_face_config";
-
-    private static final String KEY_TICK_COLOR = "KEY_TICK_COLOR";
-
-    private static final String KEY_HAND_COLOR = "KEY_HAND_COLOR";
-
-    private static final String KEY_CHARACTER_TEXT = "KEY_CHARACTER_TEXT";
-
-    private static final String KEY_BACKGROUND_IMG = "KEY_BACKGROUND_IMG";
+    private ConfigModel mConfigModel;
 
     private GoogleApiClient mGoogleApiClient;
 
-    private String mCharacterText = null;
-
-    private String mTickColor = null;
-
-    private String mHandColor = null;
-
-    private Bitmap mBackgroundImage = null;
+    private Bitmap mBackgroundImage;
 
     WatchFaceConfigConnector(Context context) {
         mGoogleApiClient = new GoogleApiClient.Builder(context)
@@ -63,32 +51,16 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
     }
 
     public void sendConfigChangeToWatch() {
-        if (!configChanged()) {
-            return;
-        }
-        if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
-            throw new RuntimeException("GoogleApiClient isn't connected");
-        }
-        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(
-                DATA_LAYER_WATCH_FACE_CONFIG_PATH);
-        if (mCharacterText != null) {
-            putDataMapRequest.getDataMap().putString(KEY_CHARACTER_TEXT, mCharacterText);
-        }
-        if (mTickColor != null) {
-            putDataMapRequest.getDataMap().putString(KEY_TICK_COLOR, mTickColor);
-        }
-        if (mHandColor != null) {
-            putDataMapRequest.getDataMap().putString(KEY_HAND_COLOR, mHandColor);
-        }
         if (mBackgroundImage != null) {
             Asset asset = compressAndCreateAssetFromImageUri(mBackgroundImage);
             if (asset != null) {
-                putDataMapRequest.getDataMap().putAsset(KEY_BACKGROUND_IMG, asset);
+                getConfigModel().getDataMap().putAsset(ConfigModel.KEY_BACKGROUND_IMG, asset);
             }
         }
-        PutDataRequest putDataRequest = putDataMapRequest.asPutDataRequest();
-        Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest);
-        resetConfig();
+        if (!getConfigModel().isEmpty()) {
+            ConnectManager.getInstance().sendConfigModel(mGoogleApiClient, getConfigModel());
+            resetConfig();
+        }
     }
 
     private Asset compressAndCreateAssetFromImageUri(Bitmap image) {
@@ -97,16 +69,8 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
         return Asset.createFromBytes(byteStream.toByteArray());
     }
 
-    private boolean configChanged() {
-        return mCharacterText != null || mTickColor != null
-                || mHandColor != null || mBackgroundImage != null;
-    }
-
     private void resetConfig() {
-        mCharacterText = null;
-        mTickColor = null;
-        mHandColor = null;
-        mBackgroundImage = null;
+        mConfigModel = null;
     }
 
     @Override
@@ -126,19 +90,28 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
         Log.e(TAG, "Google API connection failed");
     }
 
-    public void setCharacterText(String mCharacterText) {
-        this.mCharacterText = mCharacterText;
+    public void setCharacterText(String text) {
+        getConfigModel().getDataMap().putString(ConfigModel.KEY_TEXT, text);
     }
 
-    public void setTickColor(String mTickColor) {
-        this.mTickColor = mTickColor;
+    public void setTickColor(String tickColor) {
+        getConfigModel().getDataMap().putString(ConfigModel.KEY_TICK_COLOR, tickColor);
     }
 
-    public void setHandColor(String mHandColor) {
-        this.mHandColor = mHandColor;
+    public void setHandColor(String handColor) {
+        getConfigModel().getDataMap().putString(ConfigModel.KEY_HAND_COLOR, handColor);
     }
 
     public void setBackgroundImage(Bitmap backgroundImage) {
+        // Bitmap should be changed to Asset before putting to DataMap, which costs time.
+        // So we only do it when it is about to send the DataMap.
         mBackgroundImage = backgroundImage;
+    }
+
+    private ConfigModel getConfigModel() {
+        if (mConfigModel == null) {
+            mConfigModel = new ConfigModel();
+        }
+        return mConfigModel;
     }
 }

@@ -3,6 +3,8 @@ package com.huangsz.android.screentip.face;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.huangsz.com.screentip.connect.ConnectManager;
+import android.huangsz.com.screentip.connect.model.ConfigModel;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -27,21 +29,6 @@ class CharacterWatchFaceConnector implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "CWatchFaceConnector";
-
-    // Keep the same with {@link WatchFaceConfigActivity} in handheld app.
-    private static final String DATA_LAYER_WATCHFACE_CONFIG_PATH = "/watch_face_config";
-
-    // Keep the same with {@link WatchFaceConfigActivity} in handheld app.
-    private static final String KEY_TICK_COLOR = "KEY_TICK_COLOR";
-
-    // Keep the same with {@link WatchFaceConfigActivity} in handheld app.
-    private static final String KEY_HAND_COLOR = "KEY_HAND_COLOR";
-
-    // Keep the same with {@link WatchFaceConfigActivity} in handheld app.
-    private static final String KEY_CHARACTER_TEXT = "KEY_CHARACTER_TEXT";
-
-    // Keep the same with {@link WatchFaceConfigActivity} in handheld app.
-    private static final String KEY_BACKGROUND_IMG = "KEY_BACKGROUND_IMG";
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -93,25 +80,26 @@ class CharacterWatchFaceConnector implements
             };
 
     private void processConfigurationFor(DataItem item) {
-        if (DATA_LAYER_WATCHFACE_CONFIG_PATH.equals(item.getUri().getPath())) {
-            DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-            if (dataMap.containsKey(KEY_TICK_COLOR)) {
-                String color = dataMap.getString(KEY_TICK_COLOR);
-                mWatchFaceRenderer.setTickColor(Color.parseColor(color));
-            }
-            if (dataMap.containsKey(KEY_HAND_COLOR)) {
-                String color = dataMap.getString(KEY_HAND_COLOR);
-                mWatchFaceRenderer.setHandColor(Color.parseColor(color));
-            }
-            if (dataMap.containsKey(KEY_CHARACTER_TEXT)) {
-                String text = dataMap.getString(KEY_CHARACTER_TEXT);
-                mWatchFaceRenderer.setCharacterTip(text);
-            }
-            if (dataMap.containsKey(KEY_BACKGROUND_IMG)) {
-                Asset asset = dataMap.getAsset(KEY_BACKGROUND_IMG);
-                new LoadBitmapAsyncTask(
-                        mGoogleApiClient, mLoadBitmapCompleteCallback).execute(asset);
-            }
+        ConfigModel configModel = ConnectManager.getInstance().maybeGetConfigModel(item);
+        if (configModel == null) {
+            return;
+        }
+        if (configModel.containsKey(ConfigModel.KEY_TICK_COLOR)) {
+            String color = configModel.getDataMap().getString(ConfigModel.KEY_TICK_COLOR);
+            mWatchFaceRenderer.setTickColor(Color.parseColor(color));
+        }
+        if (configModel.containsKey(ConfigModel.KEY_HAND_COLOR)) {
+            String color = configModel.getDataMap().getString(ConfigModel.KEY_HAND_COLOR);
+            mWatchFaceRenderer.setHandColor(Color.parseColor(color));
+        }
+        if (configModel.containsKey(ConfigModel.KEY_TEXT)) {
+            String text = configModel.getDataMap().getString(ConfigModel.KEY_TEXT);
+            mWatchFaceRenderer.setText(text);
+        }
+        if (configModel.containsKey(ConfigModel.KEY_BACKGROUND_IMG)) {
+            Asset asset = configModel.getDataMap().getAsset(ConfigModel.KEY_BACKGROUND_IMG);
+            new LoadBitmapAsyncTask(
+                    mGoogleApiClient, mLoadBitmapCompleteCallback).execute(asset);
         }
     }
 

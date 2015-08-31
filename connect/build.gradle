@@ -1,11 +1,10 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "com.huangsz.android.screentip"
         minSdkVersion 18
         targetSdkVersion 21
         versionCode 1
@@ -21,6 +20,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    wearApp project(':wear')
-    compile project(':connect')
+    compile 'com.google.android.gms:play-services-wearable:6.5.87'
+    compile 'com.android.support:appcompat-v7:21.0.3'
 }

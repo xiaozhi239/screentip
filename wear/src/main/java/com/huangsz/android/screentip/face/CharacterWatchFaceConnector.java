@@ -32,9 +32,6 @@ class CharacterWatchFaceConnector implements
     private static final String DATA_LAYER_WATCHFACE_CONFIG_PATH = "/watch_face_config";
 
     // Keep the same with {@link WatchFaceConfigActivity} in handheld app.
-    private static final String KEY_CHARACTER_COLOR = "KEY_CHARACTER_COLOR";
-
-    // Keep the same with {@link WatchFaceConfigActivity} in handheld app.
     private static final String KEY_TICK_COLOR = "KEY_TICK_COLOR";
 
     // Keep the same with {@link WatchFaceConfigActivity} in handheld app.
@@ -98,10 +95,6 @@ class CharacterWatchFaceConnector implements
     private void processConfigurationFor(DataItem item) {
         if (DATA_LAYER_WATCHFACE_CONFIG_PATH.equals(item.getUri().getPath())) {
             DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-            if (dataMap.containsKey(KEY_CHARACTER_COLOR)) {
-                String color = dataMap.getString(KEY_CHARACTER_COLOR);
-                mWatchFaceRenderer.setCharacterColor(Color.parseColor(color));
-            }
             if (dataMap.containsKey(KEY_TICK_COLOR)) {
                 String color = dataMap.getString(KEY_TICK_COLOR);
                 mWatchFaceRenderer.setTickColor(Color.parseColor(color));

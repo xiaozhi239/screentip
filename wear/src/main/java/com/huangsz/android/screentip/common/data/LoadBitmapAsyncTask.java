@@ -65,6 +65,6 @@ public class LoadBitmapAsyncTask extends AsyncTask<Asset, Void, Bitmap> {
     }
 
     public interface PostExecuteCallback {
-        public void onBitmapLoaded(Bitmap bitmap);
+        void onBitmapLoaded(Bitmap bitmap);
     }
 }

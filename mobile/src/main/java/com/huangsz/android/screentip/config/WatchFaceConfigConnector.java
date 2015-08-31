@@ -24,8 +24,6 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
 
     private static final String DATA_LAYER_WATCH_FACE_CONFIG_PATH = "/watch_face_config";
 
-    private static final String KEY_CHARACTER_COLOR = "KEY_CHARACTER_COLOR";
-
     private static final String KEY_TICK_COLOR = "KEY_TICK_COLOR";
 
     private static final String KEY_HAND_COLOR = "KEY_HAND_COLOR";
@@ -35,8 +33,6 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
     private static final String KEY_BACKGROUND_IMG = "KEY_BACKGROUND_IMG";
 
     private GoogleApiClient mGoogleApiClient;
-
-    private String mCharacterColor = null;
 
     private String mCharacterText = null;
 
@@ -78,9 +74,6 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
         if (mCharacterText != null) {
             putDataMapRequest.getDataMap().putString(KEY_CHARACTER_TEXT, mCharacterText);
         }
-        if (mCharacterColor != null) {
-            putDataMapRequest.getDataMap().putString(KEY_CHARACTER_COLOR, mCharacterColor);
-        }
         if (mTickColor != null) {
             putDataMapRequest.getDataMap().putString(KEY_TICK_COLOR, mTickColor);
         }
@@ -105,13 +98,12 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
     }
 
     private boolean configChanged() {
-        return mCharacterText != null || mCharacterColor != null || mTickColor != null
+        return mCharacterText != null || mTickColor != null
                 || mHandColor != null || mBackgroundImage != null;
     }
 
     private void resetConfig() {
         mCharacterText = null;
-        mCharacterColor = null;
         mTickColor = null;
         mHandColor = null;
         mBackgroundImage = null;
@@ -132,10 +124,6 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.e(TAG, "Google API connection failed");
-    }
-
-    public void setCharacterColor(String mCharacterColor) {
-        this.mCharacterColor = mCharacterColor;
     }
 
     public void setCharacterText(String mCharacterText) {

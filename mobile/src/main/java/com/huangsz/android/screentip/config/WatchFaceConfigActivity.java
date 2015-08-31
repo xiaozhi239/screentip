@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Layout;
@@ -21,20 +23,19 @@ import com.huangsz.android.screentip.utils.ImageUtils;
 import com.huangsz.android.screentip.widget.CharacterTipDialog;
 import com.huangsz.android.screentip.widget.ColorChooserDialog;
 
-public class WatchFaceConfigActivity extends ActionBarActivity implements
-        ColorChooserDialog.Listener, CharacterTipDialog.Listener {
+public class WatchFaceConfigActivity extends ActionBarActivity {
 
     private static final String TAG = "WatchFaceConfigActivity";
 
-    private static final String TAG_CHARACTER_COLOR = "TAG_CHARACTER_COLOR";
-
-    private static final String TAG_TICK_COLOR = "TAG_TICK_COLOR";
-
-    private static final String TAG_HAND_COLOR = "TAG_HAND_COLOR";
-
-    private static final String TAG_CHARACTER_TEXT = "TAG_CHARACTER_TEXT";
-
     private static final int CODE_SELECT_BACKGROUND_PICTURE = 0;
+
+    private static final int MESSAGE_TICK_COLOR = 1;
+
+    private static final int MESSAGE_HAND_COLOR = 2;
+
+    private static final int MESSAGE_TEXT_COLOR = 3;
+
+    private static final int MESSAGE_TEXT = 4;
 
     private View mConfigCharacterColorPreview;
 
@@ -50,6 +51,41 @@ public class WatchFaceConfigActivity extends ActionBarActivity implements
 
     private WatchFaceConfigConnector mWatchFaceConfigConnector;
 
+    private final Handler mConfigHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MESSAGE_TICK_COLOR:
+                    String color = (String) msg.obj;
+                    mConfigTickColorPreview.setBackgroundColor(Color.parseColor(color));
+                    mWatchFaceConfigConnector.setTickColor(color);
+                    break;
+                case MESSAGE_HAND_COLOR:
+                    color = (String) msg.obj;
+                    mConfigHandColorPreview.setBackgroundColor(Color.parseColor(color));
+                    mWatchFaceConfigConnector.setHandColor(color);
+                    break;
+                case MESSAGE_TEXT_COLOR:
+                    if (FLAGS.SCREEN_CHARACTER) {
+                        color = (String) msg.obj;
+                        mConfigCharacterColorPreview.setBackgroundColor(Color.parseColor(color));
+                        mWatchFaceConfigConnector.setCharacterColor(color);
+                    }
+                    break;
+                case MESSAGE_TEXT:
+                    if (FLAGS.SCREEN_CHARACTER) {
+                        String text = (String) msg.obj;
+                        mConfigCharacterTextPreview.setText(text);
+                        mWatchFaceConfigConnector.setCharacterText(text);
+                    }
+                default:
+                    super.handleMessage(msg);
+            }
+
+
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +98,11 @@ public class WatchFaceConfigActivity extends ActionBarActivity implements
         mUpdateConfigButton = (Button) findViewById(R.id.configuration_update_button);
         mBackgroundImageView = (ImageView) findViewById(R.id.configuration_background);
         mWatchFaceConfigConnector = new WatchFaceConfigConnector(this);
+        setupListeners();
+    }
 
+    private void setupListeners() {
+        // text color dialog.
         RelativeLayout characterColorLayout = (RelativeLayout) findViewById(
                 R.id.configuration_character_colour_layout);
         if (FLAGS.SCREEN_CHARACTER) {
@@ -71,33 +111,39 @@ public class WatchFaceConfigActivity extends ActionBarActivity implements
                         @Override
                         public void onClick(View v) {
                             ColorChooserDialog.newInstance(
-                                    getString(R.string.watchface_character_color))
-                                    .show(getFragmentManager(), TAG_CHARACTER_COLOR);
+                                    getString(R.string.watchface_character_color),
+                                    mConfigHandler, MESSAGE_TEXT_COLOR)
+                                    .show(getFragmentManager(), "");
                         }
                     });
         } else {
             characterColorLayout.setVisibility(View.GONE);
         }
 
+        // tick color dialog.
         findViewById(R.id.configuration_ticks_colour_layout).setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ColorChooserDialog.newInstance(getString(R.string.watchface_ticks_color))
-                                .show(getFragmentManager(), TAG_TICK_COLOR);
+                        ColorChooserDialog.newInstance(getString(R.string.watchface_ticks_color),
+                                mConfigHandler, MESSAGE_TICK_COLOR)
+                                .show(getFragmentManager(), "");
                     }
                 }
         );
 
+        // hand color dialog.
         findViewById(R.id.configuration_hands_colour_layout).setOnClickListener(
                 new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ColorChooserDialog.newInstance(getString(R.string.watchface_hands_color))
-                        .show(getFragmentManager(), TAG_HAND_COLOR);
-            }
-        });
+                    @Override
+                    public void onClick(View v) {
+                        ColorChooserDialog.newInstance(getString(R.string.watchface_hands_color),
+                                mConfigHandler, MESSAGE_HAND_COLOR)
+                                .show(getFragmentManager(), "");
+                    }
+                });
 
+        // text dialog.
         RelativeLayout characterTextLayout = (RelativeLayout) findViewById(
                 R.id.configuration_character_text_layout);
         if (FLAGS.SCREEN_CHARACTER) {
@@ -105,13 +151,14 @@ public class WatchFaceConfigActivity extends ActionBarActivity implements
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            new CharacterTipDialog().show(getFragmentManager(), TAG_CHARACTER_TEXT);
+                            new CharacterTipDialog().show(getFragmentManager(), "");
                         }
                     }
             );
         } else {
             characterTextLayout.setVisibility(View.GONE);
         }
+
         mBackgroundImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,6 +170,7 @@ public class WatchFaceConfigActivity extends ActionBarActivity implements
                         CODE_SELECT_BACKGROUND_PICTURE);
             }
         });
+
         mUpdateConfigButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -177,26 +225,13 @@ public class WatchFaceConfigActivity extends ActionBarActivity implements
             mBackgroundImageView.setImageBitmap(bitmap);
         }
     }
+//
+//    @Override
+//    public void onTextChanged(String text, String tag) {
+//        if (FLAGS.SCREEN_CHARACTER && TAG_CHARACTER_TEXT.equals(tag)) {
+//            mConfigCharacterTextPreview.setText(text);
+//            mWatchFaceConfigConnector.setCharacterText(text);
+//        }
+//    }
 
-    @Override
-    public void onColourSelected(String color, String tag) {
-        if (FLAGS.SCREEN_CHARACTER && TAG_CHARACTER_COLOR.equals(tag)) {
-            mConfigCharacterColorPreview.setBackgroundColor(Color.parseColor(color));
-            mWatchFaceConfigConnector.setCharacterColor(color);
-        } else if (TAG_TICK_COLOR.equals(tag)) {
-            mConfigTickColorPreview.setBackgroundColor(Color.parseColor(color));
-            mWatchFaceConfigConnector.setTickColor(color);
-        } else if (TAG_HAND_COLOR.equals(tag)) {
-            mConfigHandColorPreview.setBackgroundColor(Color.parseColor(color));
-            mWatchFaceConfigConnector.setHandColor(color);
-        }
-    }
-
-    @Override
-    public void onTextChanged(String text, String tag) {
-        if (FLAGS.SCREEN_CHARACTER && TAG_CHARACTER_TEXT.equals(tag)) {
-            mConfigCharacterTextPreview.setText(text);
-            mWatchFaceConfigConnector.setCharacterText(text);
-        }
-    }
 }

@@ -1,6 +1,7 @@
 package com.huangsz.android.screentip.widget;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.view.View;
 
@@ -21,6 +22,18 @@ public class TextConfigDialog extends BaseConfigDialog {
     public void customizeView(AlertDialog.Builder builder) {
         View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_text_config, null);
         builder.setView(view);
+        builder.setPositiveButton(R.string.button_confirm, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
     }
 
 }

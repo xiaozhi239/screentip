@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.text.Layout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +19,6 @@ import android.widget.TextView;
 import com.huangsz.android.screentip.R;
 import com.huangsz.android.screentip.feature.FLAGS;
 import com.huangsz.android.screentip.utils.ImageUtils;
-import com.huangsz.android.screentip.widget.CharacterTipDialog;
 import com.huangsz.android.screentip.widget.ColorChooserDialog;
 import com.huangsz.android.screentip.widget.TextConfigDialog;
 

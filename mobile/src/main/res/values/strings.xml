@@ -21,4 +21,9 @@
     girlfriend\'s picture as your watch face!</string>
 
   <string name="hello_world">Hello world!</string>
+
+  <string name="hint_config_text_coordinate">Percentage: 0-100%</string>
+
+  <string name="button_confirm">Yes</string>
+  <string name="button_cancel">Cancel</string>
 </resources>

@@ -8,4 +8,12 @@
     <item name="cyan">Cyan</item>
     <item name="magenta">Magenta</item>
   </string-array>
+
+  <string-array name="fonts_array">
+    <item name="12dp">12dp</item>
+    <item name="14dp">14dp</item>
+    <item name="16dp">16dp</item>
+    <item name="18dp">18dp</item>
+    <item name="36dp">36dp</item>
+  </string-array>
 </resources>

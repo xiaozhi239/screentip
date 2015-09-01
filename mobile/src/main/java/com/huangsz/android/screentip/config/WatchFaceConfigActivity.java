@@ -3,6 +3,7 @@ package com.huangsz.android.screentip.config;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.huangsz.com.screentip.common.utils.ImageUtils;
 import android.huangsz.com.screentip.connect.model.TextConfigModel;
 import android.net.Uri;
 import android.os.Handler;
@@ -19,7 +20,6 @@ import android.widget.TextView;
 
 import com.huangsz.android.screentip.R;
 import com.huangsz.android.screentip.feature.FLAGS;
-import com.huangsz.android.screentip.utils.ImageUtils;
 import com.huangsz.android.screentip.widget.ColorChooserDialog;
 import com.huangsz.android.screentip.widget.TextConfigDialog;
 

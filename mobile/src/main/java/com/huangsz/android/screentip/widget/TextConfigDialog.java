@@ -25,6 +25,8 @@ public class TextConfigDialog extends BaseConfigDialog {
 
     private Spinner mFontSpinner;
 
+    private TextConfigModel mTextModel = new TextConfigModel();
+
     public static TextConfigDialog newInstance(String title, Handler handler, int handlerFlag) {
         TextConfigDialog dialog = new TextConfigDialog();
         setupDialog(dialog, title, handler, handlerFlag);
@@ -50,23 +52,57 @@ public class TextConfigDialog extends BaseConfigDialog {
         });
     }
 
+    private void restoreStatus() {
+        if (mTextModel.isEmpty()) {
+            return;
+        }
+        mContent.setText(mTextModel.getContent());
+        mCoordinateX.setText(String.valueOf(mTextModel.getCoordinateX()));
+        mCoordinateY.setText(String.valueOf(mTextModel.getCoordinateY()));
+        restoreColorSpinner(mTextModel.getColor());
+        restoreFontSpinner(mTextModel.getFont());
+    }
+
     private void setElements(View view) {
         mContent = (EditText) view.findViewById(R.id.dialog_text_content);
         mCoordinateX = (EditText) view.findViewById(R.id.dialog_text_coordinate_x);
         mCoordinateY = (EditText) view.findViewById(R.id.dialog_text_coordinate_y);
         mColorSpinner = (Spinner) view.findViewById(R.id.dialog_text_color_spinner);
         mFontSpinner = (Spinner) view.findViewById(R.id.dialog_text_font_spinner);
+        restoreStatus();
     }
 
     private void confirmConfig() {
-        TextConfigModel model = new TextConfigModel();
-        model.setColor(mColorSpinner.getSelectedItem().toString());
-        String fontInDp = mFontSpinner.getSelectedItem().toString().trim();  // Example: '12dp'
-        model.setFont(Integer.parseInt(fontInDp.substring(0, fontInDp.length() - 2)));
-        model.setContent(mContent.getText().toString());
-        model.setCoordinateX(Float.valueOf(mCoordinateX.getText().toString()));
-        model.setCoordinateY(Float.valueOf(mCoordinateY.getText().toString()));
-        sendMessage(model);
+        mTextModel.setColor(mColorSpinner.getSelectedItem().toString());
+        mTextModel.setFont(getFontDpFromSpinnerSelection(
+                mFontSpinner.getSelectedItem().toString()));
+        mTextModel.setContent(mContent.getText().toString());
+        mTextModel.setCoordinateX(Float.valueOf(mCoordinateX.getText().toString()));
+        mTextModel.setCoordinateY(Float.valueOf(mCoordinateY.getText().toString()));
+        sendMessage(mTextModel);
     }
 
+    private int getFontDpFromSpinnerSelection(String spinnerSelection) {
+        String fontInDp = spinnerSelection.trim();  // Example: '12dp'
+        return Integer.parseInt(fontInDp.substring(0, fontInDp.length() - 2));
+    }
+
+    private void restoreColorSpinner(String color) {
+        for (int i = 0; i < mColorSpinner.getCount(); i++) {
+            if (mColorSpinner.getItemAtPosition(i).equals(color)) {
+                mColorSpinner.setSelection(i);
+                break;
+            }
+        }
+    }
+
+    private void restoreFontSpinner(int font) {
+        for (int i = 0; i < mFontSpinner.getCount(); i++) {
+            if (getFontDpFromSpinnerSelection(
+                    mFontSpinner.getItemAtPosition(i).toString()) == font) {
+                mFontSpinner.setSelection(i);
+                break;
+            }
+        }
+    }
 }

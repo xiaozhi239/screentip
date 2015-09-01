@@ -1,5 +1,7 @@
 package android.huangsz.com.screentip.connect.model;
 
+import android.support.annotation.Nullable;
+
 import com.google.android.gms.wearable.DataMap;
 
 /**
@@ -33,7 +35,7 @@ public class ConfigModel extends Model {
     /**
      * Get the TextConfigModel, return null if not present.
      */
-    public TextConfigModel maybeGetTextConfigModel() {
+    public @Nullable TextConfigModel maybeGetTextConfigModel() {
         if (containsKey(TextConfigModel.KEY_TEXT_CONFIG_MODEL)) {
             return new TextConfigModel(mDataMap.getDataMap(TextConfigModel.KEY_TEXT_CONFIG_MODEL));
         }

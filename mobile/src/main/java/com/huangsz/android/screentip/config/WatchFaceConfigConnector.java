@@ -6,6 +6,7 @@ import android.huangsz.com.screentip.connect.ConnectManager;
 import android.huangsz.com.screentip.connect.model.ConfigModel;
 import android.huangsz.com.screentip.connect.model.TextConfigModel;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -91,8 +92,12 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
         Log.e(TAG, "Google API connection failed");
     }
 
-    public void setText(TextConfigModel textConfigModel) {
+    public void setTextConfigModel(TextConfigModel textConfigModel) {
         getConfigModel().setTextConfigModel(textConfigModel);
+    }
+
+    public @Nullable TextConfigModel getTextConfigModel() {
+        return getConfigModel().maybeGetTextConfigModel();
     }
 
     public void setTickColor(String tickColor) {

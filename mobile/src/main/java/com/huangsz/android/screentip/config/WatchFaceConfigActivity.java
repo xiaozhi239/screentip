@@ -90,11 +90,16 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
         if (FLAGS.SCREEN_TEXT) {
             characterTextLayout.setOnClickListener(
                     new View.OnClickListener() {
+                        private TextConfigDialog dialog;
+
                         @Override
                         public void onClick(View v) {
-                            TextConfigDialog.newInstance(getString(R.string.watchface_text),
-                                    mConfigHandler, ConfigHandler.MESSAGE_TEXT)
-                                    .show(getFragmentManager(), "");
+                             if (dialog == null) {
+                                 dialog = TextConfigDialog.newInstance(
+                                         getString(R.string.watchface_text),
+                                         mConfigHandler, ConfigHandler.MESSAGE_TEXT);
+                             }
+                            dialog.show(getFragmentManager(), "");
                         }
                     }
             );
@@ -205,7 +210,7 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                         TextConfigModel textModel = (TextConfigModel) msg.obj;
                         activity.mConfigCharacterTextPreview.setText(
                                 textModel.getDataMap().getString(TextConfigModel.KEY_TEXT_CONTENT));
-                        activity.mWatchFaceConfigConnector.setText(textModel);
+                        activity.mWatchFaceConfigConnector.setTextConfigModel(textModel);
                     }
                 default:
                     super.handleMessage(msg);

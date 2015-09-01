@@ -1,6 +1,15 @@
 <resources>
   <!-- Default screen margins, per the Android Design guidelines. -->
+  <dimen name="default_layout_margin">16dp</dimen>
+
   <dimen name="activity_horizontal_margin">16dp</dimen>
   <dimen name="activity_vertical_margin">16dp</dimen>
+
   <dimen name="layout_elements_vertical_margin">10dp</dimen>
+
+  <dimen name="default_label_text_size">18sp</dimen>
+
+  <!-- text config dialog -->
+  <dimen name="text_config_spinner_width">100dp</dimen>
+  <dimen name="text_config_seekbar_width">150dp</dimen>
 </resources>

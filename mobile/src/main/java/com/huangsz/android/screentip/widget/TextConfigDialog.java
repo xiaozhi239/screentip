@@ -6,6 +6,7 @@ import android.huangsz.com.screentip.connect.model.TextConfigModel;
 import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 
 import com.huangsz.android.screentip.R;
@@ -17,9 +18,9 @@ public class TextConfigDialog extends BaseConfigDialog {
 
     private EditText mContent;
 
-    private EditText mCoordinateX;
+    private SeekBar mCoordinateX;
 
-    private EditText mCoordinateY;
+    private SeekBar mCoordinateY;
 
     private Spinner mColorSpinner;
 
@@ -57,16 +58,16 @@ public class TextConfigDialog extends BaseConfigDialog {
             return;
         }
         mContent.setText(mTextModel.getContent());
-        mCoordinateX.setText(String.valueOf(mTextModel.getCoordinateX()));
-        mCoordinateY.setText(String.valueOf(mTextModel.getCoordinateY()));
+        mCoordinateX.setProgress((int)mTextModel.getCoordinateX());
+        mCoordinateY.setProgress((int)mTextModel.getCoordinateY());
         restoreColorSpinner(mTextModel.getColor());
-        restoreFontSpinner(mTextModel.getFont());
+        restoreFontSpinner(mTextModel.getTextSize());
     }
 
     private void setElements(View view) {
         mContent = (EditText) view.findViewById(R.id.dialog_text_content);
-        mCoordinateX = (EditText) view.findViewById(R.id.dialog_text_coordinate_x);
-        mCoordinateY = (EditText) view.findViewById(R.id.dialog_text_coordinate_y);
+        mCoordinateX = (SeekBar) view.findViewById(R.id.dialog_text_coordinate_x);
+        mCoordinateY = (SeekBar) view.findViewById(R.id.dialog_text_coordinate_y);
         mColorSpinner = (Spinner) view.findViewById(R.id.dialog_text_color_spinner);
         mFontSpinner = (Spinner) view.findViewById(R.id.dialog_text_font_spinner);
         restoreStatus();
@@ -74,11 +75,11 @@ public class TextConfigDialog extends BaseConfigDialog {
 
     private void confirmConfig() {
         mTextModel.setColor(mColorSpinner.getSelectedItem().toString());
-        mTextModel.setFont(getFontDpFromSpinnerSelection(
+        mTextModel.setTextSize(getFontDpFromSpinnerSelection(
                 mFontSpinner.getSelectedItem().toString()));
         mTextModel.setContent(mContent.getText().toString());
-        mTextModel.setCoordinateX(Float.valueOf(mCoordinateX.getText().toString()));
-        mTextModel.setCoordinateY(Float.valueOf(mCoordinateY.getText().toString()));
+        mTextModel.setCoordinateX(mCoordinateX.getProgress());
+        mTextModel.setCoordinateY(mCoordinateY.getProgress());
         sendMessage(mTextModel);
     }
 

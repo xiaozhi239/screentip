@@ -12,7 +12,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.huangsz.com.screentip.common.utils.UnitTransferUtils;
 import android.huangsz.com.screentip.connect.model.TextConfigModel;
-import android.util.TypedValue;
 
 import com.huangsz.android.screentip.R;
 import com.huangsz.android.screentip.feature.FLAGS;
@@ -103,7 +102,7 @@ class CharacterWatchFaceRenderer {
     public void setText(TextConfigModel textModel) {
         mTextModel = textModel;
         mTextPaint.setColor(Color.parseColor(textModel.getColor()));
-        mTextPaint.setTextSize(UnitTransferUtils.getPixelFromDp(textModel.getFont(), mContext));
+        mTextPaint.setTextSize(UnitTransferUtils.getPixelFromDp(textModel.getTextSize(), mContext));
     }
 
     public void setBackgroundImage(Bitmap image) {

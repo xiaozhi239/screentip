@@ -22,8 +22,15 @@
 
   <string name="hello_world">Hello world!</string>
 
-  <string name="hint_config_text_coordinate">Percentage: 0-100%</string>
+  <!-- TextConfigDialog -->
+  <string name="hint_config_text_content">Write your content</string>
+  <string name="label_text_content">Content</string>
+  <string name="label_text_color">Color</string>
+  <string name="label_text_size">Text size</string>
+  <string name="label_coordinate_x">Coordinate X</string>
+  <string name="label_coordinate_y">Coordinate Y</string>
 
   <string name="button_confirm">Yes</string>
   <string name="button_cancel">Cancel</string>
+
 </resources>

@@ -16,7 +16,7 @@ public class TextConfigModel extends Model {
 
     public static final String KEY_TEXT_COLOR = "KEY_TEXT_COLOR";
 
-    public static final String KEY_TEXT_FONT = "KEY_TEXT_FONT";
+    public static final String KEY_TEXT_SIZE = "KEY_TEXT_SIZE";
 
     public static final String KEY_COORDINATE_X = "KEY_COORDINATE_X";
 
@@ -43,10 +43,10 @@ public class TextConfigModel extends Model {
     }
 
     /**
-     * Get font, the unit is dp. So it needs to be transferred to pixels when used.
+     * Get text size, the unit is dp. So it needs to be transferred to pixels when used.
      */
-    public int getFont() {
-        return mDataMap.getInt(KEY_TEXT_FONT);
+    public int getTextSize() {
+        return mDataMap.getInt(KEY_TEXT_SIZE);
     }
 
     public String getColor() {
@@ -66,10 +66,10 @@ public class TextConfigModel extends Model {
     }
 
     /**
-     * Set font, the unit is dp. So it needs to be transferred to pixels when used.
+     * Set text size, the unit is dp. So it needs to be transferred to pixels when used.
      */
-    public void setFont(int font) {
-        mDataMap.putInt(KEY_TEXT_FONT, font);
+    public void setTextSize(int size) {
+        mDataMap.putInt(KEY_TEXT_SIZE, size);
     }
 
     public void setColor(String color) {

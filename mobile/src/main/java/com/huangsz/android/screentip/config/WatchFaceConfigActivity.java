@@ -22,17 +22,13 @@ import com.huangsz.android.screentip.utils.ImageUtils;
 import com.huangsz.android.screentip.widget.ColorChooserDialog;
 import com.huangsz.android.screentip.widget.TextConfigDialog;
 
+import java.lang.ref.WeakReference;
+
 public class WatchFaceConfigActivity extends ActionBarActivity {
 
     private static final String TAG = "WatchFaceConfigActivity";
 
     private static final int CODE_SELECT_BACKGROUND_PICTURE = 0;
-
-    private static final int MESSAGE_TICK_COLOR = 1;
-
-    private static final int MESSAGE_HAND_COLOR = 2;
-
-    private static final int MESSAGE_TEXT = 3;
 
     private View mConfigTickColorPreview;
 
@@ -46,33 +42,7 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
 
     private WatchFaceConfigConnector mWatchFaceConfigConnector;
 
-    private final Handler mConfigHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MESSAGE_TICK_COLOR:
-                    String color = (String) msg.obj;
-                    mConfigTickColorPreview.setBackgroundColor(Color.parseColor(color));
-                    mWatchFaceConfigConnector.setTickColor(color);
-                    break;
-                case MESSAGE_HAND_COLOR:
-                    color = (String) msg.obj;
-                    mConfigHandColorPreview.setBackgroundColor(Color.parseColor(color));
-                    mWatchFaceConfigConnector.setHandColor(color);
-                    break;
-                case MESSAGE_TEXT:
-                    if (FLAGS.SCREEN_CHARACTER) {
-                        String text = (String) msg.obj;
-                        mConfigCharacterTextPreview.setText(text);
-                        mWatchFaceConfigConnector.setCharacterText(text);
-                    }
-                default:
-                    super.handleMessage(msg);
-            }
-
-
-        }
-    };
+    private final Handler mConfigHandler = new ConfigHandler(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +66,7 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                     @Override
                     public void onClick(View v) {
                         ColorChooserDialog.newInstance(getString(R.string.watchface_ticks_color),
-                                mConfigHandler, MESSAGE_TICK_COLOR)
+                                mConfigHandler, ConfigHandler.MESSAGE_TICK_COLOR)
                                 .show(getFragmentManager(), "");
                     }
                 }
@@ -108,7 +78,7 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                     @Override
                     public void onClick(View v) {
                         ColorChooserDialog.newInstance(getString(R.string.watchface_hands_color),
-                                mConfigHandler, MESSAGE_HAND_COLOR)
+                                mConfigHandler, ConfigHandler.MESSAGE_HAND_COLOR)
                                 .show(getFragmentManager(), "");
                     }
                 });
@@ -122,7 +92,7 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                         @Override
                         public void onClick(View v) {
                             TextConfigDialog.newInstance(getString(R.string.watchface_text),
-                                    mConfigHandler, MESSAGE_TEXT)
+                                    mConfigHandler, ConfigHandler.MESSAGE_TEXT)
                                     .show(getFragmentManager(), "");
                         }
                     }
@@ -195,6 +165,49 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                     mBackgroundImageView.getHeight(), this);
             mWatchFaceConfigConnector.setBackgroundImage(bitmap);
             mBackgroundImageView.setImageBitmap(bitmap);
+        }
+    }
+
+    private static class ConfigHandler extends Handler {
+
+        private static final int MESSAGE_TICK_COLOR = 1;
+
+        private static final int MESSAGE_HAND_COLOR = 2;
+
+        private static final int MESSAGE_TEXT = 3;
+
+        private final WeakReference<WatchFaceConfigActivity> activityReference;
+
+        private ConfigHandler(WatchFaceConfigActivity activity) {
+            activityReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            WatchFaceConfigActivity activity = activityReference.get();
+            if (activity == null) {
+                return;
+            }
+            switch (msg.what) {
+                case MESSAGE_TICK_COLOR:
+                    String color = (String) msg.obj;
+                    activity.mConfigTickColorPreview.setBackgroundColor(Color.parseColor(color));
+                    activity.mWatchFaceConfigConnector.setTickColor(color);
+                    break;
+                case MESSAGE_HAND_COLOR:
+                    color = (String) msg.obj;
+                    activity.mConfigHandColorPreview.setBackgroundColor(Color.parseColor(color));
+                    activity.mWatchFaceConfigConnector.setHandColor(color);
+                    break;
+                case MESSAGE_TEXT:
+                    if (FLAGS.SCREEN_CHARACTER) {
+                        String text = (String) msg.obj;
+                        activity.mConfigCharacterTextPreview.setText(text);
+                        activity.mWatchFaceConfigConnector.setCharacterText(text);
+                    }
+                default:
+                    super.handleMessage(msg);
+            }
         }
     }
 }

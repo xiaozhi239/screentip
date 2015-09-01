@@ -10,6 +10,7 @@
               android:orientation="vertical">
 
   <EditText
+    android:id="@+id/dialog_text_content"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"/>
 
@@ -34,7 +35,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"/>
     <EditText
-      android:id="@+id/text_config_coordinate_x"
+      android:id="@+id/dialog_text_coordinate_x"
       android:hint="@string/hint_config_text_coordinate"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"/>
@@ -49,7 +50,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"/>
     <EditText
-      android:id="@+id/text_config_coordinate_y"
+      android:id="@+id/dialog_text_coordinate_y"
       android:hint="@string/hint_config_text_coordinate"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"/>

@@ -5,7 +5,7 @@ import com.google.android.gms.wearable.DataMap;
 /**
  * The instance contains the watch face configuration.
  */
-public class ConfigModel {
+public class ConfigModel extends Model {
 
     public static final String KEY_CONFIG_MODEL = "KEY_CONFIG_MODEL";
 
@@ -17,25 +17,22 @@ public class ConfigModel {
 
     public static final String KEY_BACKGROUND_IMG = "KEY_BACKGROUND_IMG";
 
-    private DataMap mDataMap;
+    public ConfigModel() {
+        super();
+    }
 
     public ConfigModel(DataMap dataMap) {
-        mDataMap = dataMap;
+        super(dataMap);
     }
 
-    public ConfigModel() {
-        this(new DataMap());
+    public void setTextConfigModel(TextConfigModel textConfigModel) {
+        mDataMap.putDataMap(KEY_TEXT, textConfigModel.getDataMap());
     }
 
-    public DataMap getDataMap() {
-        return mDataMap;
-    }
-
-    public boolean isEmpty() {
-        return mDataMap.isEmpty();
-    }
-
-    public boolean containsKey(String key) {
-        return mDataMap.containsKey(key);
+    public TextConfigModel maybeGetTextConfigModel() {
+        if (containsKey(KEY_TEXT)) {
+            return new TextConfigModel(mDataMap.getDataMap(KEY_TEXT));
+        }
+        return null;
     }
 }

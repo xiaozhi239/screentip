@@ -13,6 +13,7 @@ import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
 import android.view.SurfaceHolder;
 
+import java.lang.ref.WeakReference;
 import java.util.TimeZone;
 
 public class CharacterWatchFaceService extends CanvasWatchFaceService {
@@ -22,15 +23,49 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
     @Override
     public Engine onCreateEngine() {
         /* provide your watch face implementation */
-        return new Engine();
+        return new WatchFaceEngine();
     }
 
-    /* implement service callback methods */
-    private class Engine extends CanvasWatchFaceService.Engine {
+    /**
+     * Update time handler.
+     */
+    private static class UpdateTimeHandler extends Handler {
 
         private static final int MSG_UPDATE_TIME = 0;
 
         private static final int INTERACTIVE_UPDATE_RATE_MS = 1000;
+
+        private final WeakReference<WatchFaceEngine> engineReference;
+
+        private UpdateTimeHandler(WatchFaceEngine engine) {
+            this.engineReference = new WeakReference<>(engine);
+        }
+
+        @Override
+        public void handleMessage(Message message) {
+            switch (message.what) {
+                case MSG_UPDATE_TIME:
+                    WatchFaceEngine engine = this.engineReference.get();
+                    if (engine == null) {
+                        this.removeMessages(MSG_UPDATE_TIME);
+                        return;
+                    }
+                    engine.invalidate();
+                    if (engine.shouldTimerBeRunning()) {
+                        long timeMs = System.currentTimeMillis();
+                        long delayMs = INTERACTIVE_UPDATE_RATE_MS
+                                - (timeMs % INTERACTIVE_UPDATE_RATE_MS);
+                        this.sendEmptyMessageDelayed(MSG_UPDATE_TIME, delayMs);
+                    }
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Implement service callback methods.
+     */
+    private class WatchFaceEngine extends CanvasWatchFaceService.Engine {
 
         private CharacterWatchFaceRenderer mWatchFaceRenderer;
 
@@ -41,23 +76,7 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
         /**
          * handler to update the time once a second in interactive mode
          */
-        final Handler mUpdateTimeHandler = new Handler() {
-            @Override
-            public void handleMessage(Message message) {
-                switch (message.what) {
-                    case MSG_UPDATE_TIME:
-                        invalidate();
-                        if (shouldTimerBeRunning()) {
-                            long timeMs = System.currentTimeMillis();
-                            long delayMs = INTERACTIVE_UPDATE_RATE_MS
-                                    - (timeMs % INTERACTIVE_UPDATE_RATE_MS);
-                            mUpdateTimeHandler
-                                    .sendEmptyMessageDelayed(MSG_UPDATE_TIME, delayMs);
-                        }
-                        break;
-                }
-            }
-        };
+        final Handler mUpdateTimeHandler = new UpdateTimeHandler(this);
 
         /**
          * receiver to update the time zone
@@ -175,9 +194,9 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
         }
 
         private void updateTimer() {
-            mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
+            mUpdateTimeHandler.removeMessages(UpdateTimeHandler.MSG_UPDATE_TIME);
             if (shouldTimerBeRunning()) {
-                mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
+                mUpdateTimeHandler.sendEmptyMessage(UpdateTimeHandler.MSG_UPDATE_TIME);
             }
         }
 
@@ -185,4 +204,6 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
             return isVisible() && !isInAmbientMode();
         }
     }
+
+
 }

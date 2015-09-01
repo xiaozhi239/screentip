@@ -3,6 +3,7 @@ package com.huangsz.android.screentip.config;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.huangsz.com.screentip.connect.model.TextConfigModel;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
@@ -86,7 +87,7 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
         // text dialog.
         RelativeLayout characterTextLayout = (RelativeLayout) findViewById(
                 R.id.configuration_character_text_layout);
-        if (FLAGS.SCREEN_CHARACTER) {
+        if (FLAGS.SCREEN_TEXT) {
             characterTextLayout.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
@@ -200,10 +201,11 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                     activity.mWatchFaceConfigConnector.setHandColor(color);
                     break;
                 case MESSAGE_TEXT:
-                    if (FLAGS.SCREEN_CHARACTER) {
-                        String text = (String) msg.obj;
-                        activity.mConfigCharacterTextPreview.setText(text);
-                        activity.mWatchFaceConfigConnector.setCharacterText(text);
+                    if (FLAGS.SCREEN_TEXT) {
+                        TextConfigModel textModel = (TextConfigModel) msg.obj;
+                        activity.mConfigCharacterTextPreview.setText(
+                                textModel.getDataMap().getString(TextConfigModel.KEY_TEXT_CONTENT));
+                        activity.mWatchFaceConfigConnector.setText(textModel);
                     }
                 default:
                     super.handleMessage(msg);

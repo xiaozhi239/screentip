@@ -7,13 +7,14 @@ import com.google.android.gms.wearable.DataMap;
  */
 public class ConfigModel extends Model {
 
+    /**
+     * Key for this model.
+     */
     public static final String KEY_CONFIG_MODEL = "KEY_CONFIG_MODEL";
 
     public static final String KEY_TICK_COLOR = "KEY_TICK_COLOR";
 
     public static final String KEY_HAND_COLOR = "KEY_HAND_COLOR";
-
-    public static final String KEY_TEXT = "KEY_TEXT";
 
     public static final String KEY_BACKGROUND_IMG = "KEY_BACKGROUND_IMG";
 
@@ -26,12 +27,15 @@ public class ConfigModel extends Model {
     }
 
     public void setTextConfigModel(TextConfigModel textConfigModel) {
-        mDataMap.putDataMap(KEY_TEXT, textConfigModel.getDataMap());
+        mDataMap.putDataMap(TextConfigModel.KEY_TEXT_CONFIG_MODEL, textConfigModel.getDataMap());
     }
 
+    /**
+     * Get the TextConfigModel, return null if not present.
+     */
     public TextConfigModel maybeGetTextConfigModel() {
-        if (containsKey(KEY_TEXT)) {
-            return new TextConfigModel(mDataMap.getDataMap(KEY_TEXT));
+        if (containsKey(TextConfigModel.KEY_TEXT_CONFIG_MODEL)) {
+            return new TextConfigModel(mDataMap.getDataMap(TextConfigModel.KEY_TEXT_CONFIG_MODEL));
         }
         return null;
     }

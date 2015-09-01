@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.huangsz.com.screentip.connect.ConnectManager;
 import android.huangsz.com.screentip.connect.model.ConfigModel;
+import android.huangsz.com.screentip.connect.model.TextConfigModel;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -90,8 +91,8 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
         Log.e(TAG, "Google API connection failed");
     }
 
-    public void setCharacterText(String text) {
-        getConfigModel().getDataMap().putString(ConfigModel.KEY_TEXT, text);
+    public void setText(TextConfigModel textConfigModel) {
+        getConfigModel().setTextConfigModel(textConfigModel);
     }
 
     public void setTickColor(String tickColor) {

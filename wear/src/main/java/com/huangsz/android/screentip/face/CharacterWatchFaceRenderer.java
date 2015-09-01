@@ -4,11 +4,14 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.huangsz.com.screentip.connect.model.TextConfigModel;
+import android.util.TypedValue;
 
 import com.huangsz.android.screentip.R;
 import com.huangsz.android.screentip.feature.FLAGS;
@@ -50,9 +53,9 @@ class CharacterWatchFaceRenderer {
     private Paint mHourPaint;
     private Paint mMinutePaint;
     private Paint mSecondPaint;
-    private Paint mCharacterPaint;  // Paint to show a character as a reminder tip.
+    private Paint mTextPaint;  // Paint to show a customized text on watch face.
 
-    private String mTipText = "宝";
+    private TextConfigModel mTextModel;
 
     CharacterWatchFaceRenderer(Context context, UpdateWatchFaceCallback updateWatchFaceCallback) {
         mContext = context;
@@ -75,7 +78,7 @@ class CharacterWatchFaceRenderer {
         mSecondPaint = createLinePaint(
                 resources.getColor(R.color.second_bar_color), 2.f, Paint.Cap.BUTT);
 
-        mCharacterPaint = createTextPaint(resources, false);
+        mTextPaint = createTextPaint(resources, false);
 
         // allocate a Calendar to calculate local time using the UTC time and time zone
         mCalendar = Calendar.getInstance();
@@ -83,10 +86,6 @@ class CharacterWatchFaceRenderer {
 
     public void setTimeZone(TimeZone timeZone) {
         mCalendar.setTimeZone(timeZone);
-    }
-
-    public void setCharacterColor(int color) {
-        mCharacterPaint.setColor(color);
     }
 
     public void setTickColor(int color) {
@@ -100,8 +99,11 @@ class CharacterWatchFaceRenderer {
         mSecondPaint.setColor(color);
     }
 
-    public void setText(String text) {
-        mTipText = text;
+    public void setText(TextConfigModel textModel) {
+        mTextModel = textModel;
+        mTextPaint.setColor(Color.parseColor(textModel.getColor()));
+        // TODO(huangsz): Change to pixel size.
+        mTextPaint.setTextSize(textModel.getFont());
     }
 
     public void setBackgroundImage(Bitmap image) {
@@ -129,7 +131,7 @@ class CharacterWatchFaceRenderer {
             mMinutePaint.setAntiAlias(antiAlias);
             // mSecondPaint is not presented in ambient mode anyway.
             mMinTickPaint.setAntiAlias(antiAlias);
-            mCharacterPaint.setAntiAlias(antiAlias);
+            mTextPaint.setAntiAlias(antiAlias);
         }
         // TODO(huangsz) restore to black and white.
     }
@@ -193,11 +195,12 @@ class CharacterWatchFaceRenderer {
         canvas.drawLine(centerX, centerY, centerX + hrX, centerY + hrY,
                 mHourPaint);
 
-        if (FLAGS.SCREEN_CHARACTER) {
+        if (FLAGS.SCREEN_TEXT && mTextModel != null) {
             // Draw the character.
-            float charX = centerX;
-            float charY = centerY * 1.6f;
-            canvas.drawText(mTipText, charX, charY, mCharacterPaint);
+            float charX = width * (mTextModel.getCoordinateX() / 100f);
+            float charY = height * (mTextModel.getCoordinateY() / 100f);
+            canvas.drawText(mTextModel.getContent(),
+                    charX, charY, mTextPaint);
         }
     }
 
@@ -237,6 +240,6 @@ class CharacterWatchFaceRenderer {
     }
 
     interface UpdateWatchFaceCallback {
-        public void updateWatchFace();
+        void updateWatchFace();
     }
 }

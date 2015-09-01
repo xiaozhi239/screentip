@@ -60,16 +60,12 @@ public class TextConfigDialog extends BaseConfigDialog {
 
     private void confirmConfig() {
         TextConfigModel model = new TextConfigModel();
-        model.getDataMap().putString(TextConfigModel.KEY_TEXT_COLOR,
-                mColorSpinner.getSelectedItem().toString());
-        model.getDataMap().putString(TextConfigModel.KEY_TEXT_FONT,
-                mFontSpinner.getSelectedItem().toString());
-        model.getDataMap().putString(TextConfigModel.KEY_TEXT_CONTENT,
-                mContent.getText().toString());
-        model.getDataMap().putInt(TextConfigModel.KEY_COORDINATE_X,
-                Integer.valueOf(mCoordinateX.getText().toString()));
-        model.getDataMap().putInt(TextConfigModel.KEY_COORDINATE_Y,
-                Integer.valueOf(mCoordinateY.getText().toString()));
+        model.setColor(mColorSpinner.getSelectedItem().toString());
+        String fontInDp = mFontSpinner.getSelectedItem().toString().trim();  // Example: '12dp'
+        model.setFont(Integer.parseInt(fontInDp.substring(0, fontInDp.length() - 2)));
+        model.setContent(mContent.getText().toString());
+        model.setCoordinateX(Float.valueOf(mCoordinateX.getText().toString()));
+        model.setCoordinateY(Float.valueOf(mCoordinateY.getText().toString()));
         sendMessage(model);
     }
 

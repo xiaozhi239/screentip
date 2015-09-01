@@ -5,5 +5,5 @@ package com.huangsz.android.screentip.feature;
  */
 public class FLAGS {
 
-    public static final boolean SCREEN_CHARACTER = true;
+    public static final boolean SCREEN_TEXT = true;
 }

@@ -7,7 +7,10 @@ import com.google.android.gms.wearable.DataMap;
  */
 public class TextConfigModel extends Model {
 
-    public static final String KEY_TEXT_CONFIG = "KEY_TEXT_CONFIG";
+    /**
+     * Key for this model.
+     */
+    public static final String KEY_TEXT_CONFIG_MODEL = "KEY_TEXT_CONFIG_MODEL";
 
     public static final String KEY_TEXT_CONTENT = "KEY_TEXT_CONTENT";
 
@@ -25,5 +28,51 @@ public class TextConfigModel extends Model {
 
     public TextConfigModel(DataMap dataMap) {
         super(dataMap);
+    }
+
+    public String getContent() {
+        return mDataMap.getString(KEY_TEXT_CONTENT);
+    }
+
+    public float getCoordinateX() {
+        return mDataMap.getFloat(KEY_COORDINATE_X);
+    }
+
+    public float getCoordinateY() {
+        return mDataMap.getFloat(KEY_COORDINATE_Y);
+    }
+
+    /**
+     * Get font, the unit is dp. So it needs to be transferred to pixels when used.
+     */
+    public int getFont() {
+        return mDataMap.getInt(KEY_TEXT_FONT);
+    }
+
+    public String getColor() {
+        return mDataMap.getString(KEY_TEXT_COLOR);
+    }
+
+    public void setContent(String content) {
+        mDataMap.putString(KEY_TEXT_CONTENT, content);
+    }
+
+    public void setCoordinateX(float x) {
+        mDataMap.putFloat(KEY_COORDINATE_X, x);
+    }
+
+    public void setCoordinateY(float y) {
+        mDataMap.putFloat(KEY_COORDINATE_Y, y);
+    }
+
+    /**
+     * Set font, the unit is dp. So it needs to be transferred to pixels when used.
+     */
+    public void setFont(int font) {
+        mDataMap.putInt(KEY_TEXT_FONT, font);
+    }
+
+    public void setColor(String color) {
+        mDataMap.putString(KEY_TEXT_COLOR, color);
     }
 }

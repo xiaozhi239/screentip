@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.huangsz.com.screentip.connect.ConnectManager;
 import android.huangsz.com.screentip.connect.model.ConfigModel;
+import android.huangsz.com.screentip.connect.model.TextConfigModel;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -17,10 +18,9 @@ import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataItemBuffer;
-import com.google.android.gms.wearable.DataMap;
-import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Wearable;
 import com.huangsz.android.screentip.common.data.LoadBitmapAsyncTask;
+import com.huangsz.android.screentip.feature.FLAGS;
 
 /**
  * Responsible for the watch face related connection and data syncing between wear and handheld.
@@ -92,9 +92,9 @@ class CharacterWatchFaceConnector implements
             String color = configModel.getDataMap().getString(ConfigModel.KEY_HAND_COLOR);
             mWatchFaceRenderer.setHandColor(Color.parseColor(color));
         }
-        if (configModel.containsKey(ConfigModel.KEY_TEXT)) {
-            String text = configModel.getDataMap().getString(ConfigModel.KEY_TEXT);
-            mWatchFaceRenderer.setText(text);
+        if (configModel.containsKey(TextConfigModel.KEY_TEXT_CONFIG_MODEL) && FLAGS.SCREEN_TEXT) {
+            TextConfigModel textModel = configModel.maybeGetTextConfigModel();
+            mWatchFaceRenderer.setText(textModel);
         }
         if (configModel.containsKey(ConfigModel.KEY_BACKGROUND_IMG)) {
             Asset asset = configModel.getDataMap().getAsset(ConfigModel.KEY_BACKGROUND_IMG);

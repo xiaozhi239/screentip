@@ -35,7 +35,7 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
 
     private View mConfigHandColorPreview;
 
-    private TextView mConfigCharacterTextPreview;
+    private TextView mConfigTextPreview;
 
     private Button mUpdateConfigButton;
 
@@ -51,7 +51,7 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
         setContentView(R.layout.activity_watch_face_config);
         mConfigTickColorPreview = findViewById(R.id.configuration_ticks_colour_preview);
         mConfigHandColorPreview = findViewById(R.id.configuration_hands_colour_preview);
-        mConfigCharacterTextPreview =
+        mConfigTextPreview =
                 (TextView) findViewById(R.id.configuration_character_text_preview);
         mUpdateConfigButton = (Button) findViewById(R.id.configuration_update_button);
         mBackgroundImageView = (ImageView) findViewById(R.id.configuration_background);
@@ -208,7 +208,9 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                 case MESSAGE_TEXT:
                     if (FLAGS.SCREEN_TEXT) {
                         TextConfigModel textModel = (TextConfigModel) msg.obj;
-                        activity.mConfigCharacterTextPreview.setText(
+                        activity.mConfigTextPreview.setTextColor(
+                                Color.parseColor(textModel.getColor()));
+                        activity.mConfigTextPreview.setText(
                                 textModel.getDataMap().getString(TextConfigModel.KEY_TEXT_CONTENT));
                         activity.mWatchFaceConfigConnector.setTextConfigModel(textModel);
                     }

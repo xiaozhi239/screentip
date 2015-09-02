@@ -83,7 +83,7 @@
 
       <TextView
         android:id="@+id/configuration_character_text_preview"
-        android:layout_width="30dp"
+        android:layout_width="100dp"
         android:layout_height="30dp"
         android:gravity="center"
         android:layout_alignParentEnd="true" />

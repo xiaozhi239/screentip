@@ -2,19 +2,16 @@ package com.huangsz.android.screentip.config;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.huangsz.com.screentip.connect.ConnectManager;
-import android.huangsz.com.screentip.connect.model.ConfigModel;
-import android.huangsz.com.screentip.connect.model.TextConfigModel;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Asset;
-import com.google.android.gms.wearable.PutDataMapRequest;
-import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
+import com.huangsz.android.screentip.connect.ConnectManager;
+import com.huangsz.android.screentip.connect.model.ConfigModel;
+import com.huangsz.android.screentip.connect.model.TextConfigModel;
 
 import java.io.ByteArrayOutputStream;
 
@@ -55,9 +52,7 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
     public void sendConfigChangeToWatch() {
         if (mBackgroundImage != null) {
             Asset asset = compressAndCreateAssetFromImageUri(mBackgroundImage);
-            if (asset != null) {
-                getConfigModel().getDataMap().putAsset(ConfigModel.KEY_BACKGROUND_IMG, asset);
-            }
+            getConfigModel().getDataMap().putAsset(ConfigModel.KEY_BACKGROUND_IMG, asset);
         }
         if (!getConfigModel().isEmpty()) {
             ConnectManager.getInstance().sendConfigModel(mGoogleApiClient, getConfigModel());
@@ -94,10 +89,6 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
 
     public void setTextConfigModel(TextConfigModel textConfigModel) {
         getConfigModel().setTextConfigModel(textConfigModel);
-    }
-
-    public @Nullable TextConfigModel getTextConfigModel() {
-        return getConfigModel().maybeGetTextConfigModel();
     }
 
     public void setTickColor(String tickColor) {

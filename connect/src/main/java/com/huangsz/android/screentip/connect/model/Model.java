@@ -1,4 +1,4 @@
-package android.huangsz.com.screentip.connect.model;
+package com.huangsz.android.screentip.connect.model;
 
 import com.google.android.gms.wearable.DataMap;
 

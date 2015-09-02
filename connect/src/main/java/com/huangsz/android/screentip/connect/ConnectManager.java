@@ -1,6 +1,4 @@
-package android.huangsz.com.screentip.connect;
-
-import android.huangsz.com.screentip.connect.model.ConfigModel;
+package com.huangsz.android.screentip.connect;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataItem;
@@ -9,6 +7,7 @@ import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
+import com.huangsz.android.screentip.connect.model.ConfigModel;
 
 /**
  * Manage class for handling configuration model sending and receiving.

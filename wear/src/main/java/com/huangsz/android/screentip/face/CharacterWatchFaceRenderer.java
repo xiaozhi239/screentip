@@ -10,10 +10,10 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.huangsz.com.screentip.common.utils.UnitTransferUtils;
-import android.huangsz.com.screentip.connect.model.TextConfigModel;
 
 import com.huangsz.android.screentip.R;
+import com.huangsz.android.screentip.common.utils.UnitTransferUtils;
+import com.huangsz.android.screentip.connect.model.TextConfigModel;
 import com.huangsz.android.screentip.feature.FLAGS;
 
 import java.util.Calendar;

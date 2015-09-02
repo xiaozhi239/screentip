@@ -1,4 +1,4 @@
-package android.huangsz.com.screentip.common;
+package com.huangsz.android.screentip.connect;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

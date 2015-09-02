@@ -3,9 +3,6 @@ package com.huangsz.android.screentip.face;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.huangsz.com.screentip.connect.ConnectManager;
-import android.huangsz.com.screentip.connect.model.ConfigModel;
-import android.huangsz.com.screentip.connect.model.TextConfigModel;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -20,6 +17,9 @@ import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.Wearable;
 import com.huangsz.android.screentip.common.data.LoadBitmapAsyncTask;
+import com.huangsz.android.screentip.connect.ConnectManager;
+import com.huangsz.android.screentip.connect.model.ConfigModel;
+import com.huangsz.android.screentip.connect.model.TextConfigModel;
 import com.huangsz.android.screentip.feature.FLAGS;
 
 /**

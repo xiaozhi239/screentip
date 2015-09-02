@@ -1,4 +1,4 @@
-package android.huangsz.com.screentip.common.utils;
+package com.huangsz.android.screentip.common.utils;
 
 import android.content.Context;
 import android.util.TypedValue;

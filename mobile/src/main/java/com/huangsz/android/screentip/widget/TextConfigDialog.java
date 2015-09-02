@@ -2,7 +2,6 @@ package com.huangsz.android.screentip.widget;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.huangsz.com.screentip.connect.model.TextConfigModel;
 import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
@@ -10,6 +9,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 
 import com.huangsz.android.screentip.R;
+import com.huangsz.android.screentip.connect.model.TextConfigModel;
 
 /**
  * Config text on watch face. Such as user customized text, date or weather.

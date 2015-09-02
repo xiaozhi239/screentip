@@ -3,8 +3,6 @@ package com.huangsz.android.screentip.config;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.huangsz.com.screentip.common.utils.ImageUtils;
-import android.huangsz.com.screentip.connect.model.TextConfigModel;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
@@ -19,6 +17,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.huangsz.android.screentip.R;
+import com.huangsz.android.screentip.common.utils.ImageUtils;
+import com.huangsz.android.screentip.connect.model.TextConfigModel;
 import com.huangsz.android.screentip.feature.FLAGS;
 import com.huangsz.android.screentip.widget.ColorChooserDialog;
 import com.huangsz.android.screentip.widget.TextConfigDialog;
@@ -26,8 +26,6 @@ import com.huangsz.android.screentip.widget.TextConfigDialog;
 import java.lang.ref.WeakReference;
 
 public class WatchFaceConfigActivity extends ActionBarActivity {
-
-    private static final String TAG = "WatchFaceConfigActivity";
 
     private static final int CODE_SELECT_BACKGROUND_PICTURE = 0;
 

@@ -2,11 +2,15 @@
 <resources>
   <string-array name="colors_array">
     <item name="black">Black</item>
-    <item name="white">White</item>
-    <item name="red">Red</item>
-    <item name="green">Green</item>
+    <item name="blue">Blue</item>
     <item name="cyan">Cyan</item>
+    <item name="gray">Gray</item>
+    <item name="green">Green</item>
     <item name="magenta">Magenta</item>
+    <item name="purple">Purple</item>
+    <item name="red">Red</item>
+    <item name="white">White</item>
+    <item name="yellow">Yellow</item>
   </string-array>
 
   <string-array name="fonts_array">
@@ -14,6 +18,10 @@
     <item name="14dp">14dp</item>
     <item name="16dp">16dp</item>
     <item name="18dp">18dp</item>
+    <item name="22dp">22dp</item>
+    <item name="28dp">28dp</item>
     <item name="36dp">36dp</item>
+    <item name="46dp">46dp</item>
+    <item name="60dp">60dp</item>
   </string-array>
 </resources>

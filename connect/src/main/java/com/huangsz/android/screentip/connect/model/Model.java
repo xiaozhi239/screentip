@@ -28,4 +28,12 @@ public abstract class Model {
     public boolean containsKey(String key) {
         return mDataMap.containsKey(key);
     }
+
+    @Override
+    public boolean equals(Object another) {
+        if (another instanceof Model && mDataMap != null) {
+            return mDataMap.equals(((Model) another).mDataMap);
+        }
+        return super.equals(another);
+    }
 }

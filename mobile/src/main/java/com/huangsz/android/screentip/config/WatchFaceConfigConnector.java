@@ -9,6 +9,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.Wearable;
+import com.google.common.annotations.VisibleForTesting;
 import com.huangsz.android.screentip.connect.ConnectManager;
 import com.huangsz.android.screentip.connect.model.ConfigModel;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
@@ -51,23 +52,13 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
 
     public void sendConfigChangeToWatch() {
         if (mBackgroundImage != null) {
-            Asset asset = compressAndCreateAssetFromImageUri(mBackgroundImage);
+            Asset asset = compressAndCreateAssetFromBitmap(mBackgroundImage);
             getConfigModel().getDataMap().putAsset(ConfigModel.KEY_BACKGROUND_IMG, asset);
         }
         if (!getConfigModel().isEmpty()) {
             ConnectManager.getInstance().sendConfigModel(mGoogleApiClient, getConfigModel());
             resetConfig();
         }
-    }
-
-    private Asset compressAndCreateAssetFromImageUri(Bitmap image) {
-        final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.PNG, 100, byteStream);
-        return Asset.createFromBytes(byteStream.toByteArray());
-    }
-
-    private void resetConfig() {
-        mConfigModel = null;
     }
 
     @Override
@@ -105,10 +96,25 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
         mBackgroundImage = backgroundImage;
     }
 
-    private ConfigModel getConfigModel() {
+    public ConfigModel getConfigModel() {
         if (mConfigModel == null) {
             mConfigModel = new ConfigModel();
         }
         return mConfigModel;
+    }
+
+    @VisibleForTesting
+    protected GoogleApiClient getGoogleApiClient() {
+        return mGoogleApiClient;
+    }
+
+    private Asset compressAndCreateAssetFromBitmap(Bitmap image) {
+        final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.PNG, 100, byteStream);
+        return Asset.createFromBytes(byteStream.toByteArray());
+    }
+
+    private void resetConfig() {
+        mConfigModel = null;
     }
 }

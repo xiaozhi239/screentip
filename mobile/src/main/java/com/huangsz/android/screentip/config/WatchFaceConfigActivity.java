@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.huangsz.android.screentip.R;
 import com.huangsz.android.screentip.common.utils.ImageUtils;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
@@ -39,9 +40,19 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
 
     private ImageView mBackgroundImageView;
 
-    private WatchFaceConfigConnector mWatchFaceConfigConnector;
+    @VisibleForTesting
+    protected WatchFaceConfigConnector mWatchFaceConfigConnector;
 
     private final Handler mConfigHandler = new ConfigHandler(this);
+
+    @VisibleForTesting
+    protected ColorChooserDialog mTickColorDialog;
+
+    @VisibleForTesting
+    protected ColorChooserDialog mHandColorDialog;
+
+    @VisibleForTesting
+    protected TextConfigDialog mTextConfigDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +75,11 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ColorChooserDialog.newInstance(getString(R.string.watchface_ticks_color),
-                                mConfigHandler, ConfigHandler.MESSAGE_TICK_COLOR)
-                                .show(getFragmentManager(), "");
+                        if (mTickColorDialog == null) {
+                            mTickColorDialog = ColorChooserDialog.newInstance(getString(R.string.watchface_ticks_color),
+                                    mConfigHandler, ConfigHandler.MESSAGE_TICK_COLOR);
+                        }
+                        mTickColorDialog.show(getFragmentManager(), "");
                     }
                 }
         );
@@ -76,9 +89,11 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ColorChooserDialog.newInstance(getString(R.string.watchface_hands_color),
-                                mConfigHandler, ConfigHandler.MESSAGE_HAND_COLOR)
-                                .show(getFragmentManager(), "");
+                        if (mHandColorDialog == null) {
+                            mHandColorDialog = ColorChooserDialog.newInstance(getString(R.string.watchface_hands_color),
+                                    mConfigHandler, ConfigHandler.MESSAGE_HAND_COLOR);
+                        }
+                        mHandColorDialog.show(getFragmentManager(), "");
                     }
                 });
 
@@ -88,16 +103,14 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
         if (FLAGS.SCREEN_TEXT) {
             characterTextLayout.setOnClickListener(
                     new View.OnClickListener() {
-                        private TextConfigDialog dialog;
-
                         @Override
                         public void onClick(View v) {
-                             if (dialog == null) {
-                                 dialog = TextConfigDialog.newInstance(
+                             if (mTextConfigDialog == null) {
+                                 mTextConfigDialog = TextConfigDialog.newInstance(
                                          getString(R.string.watchface_text),
                                          mConfigHandler, ConfigHandler.MESSAGE_TEXT);
                              }
-                            dialog.show(getFragmentManager(), "");
+                            mTextConfigDialog.show(getFragmentManager(), "");
                         }
                     }
             );

@@ -15,10 +15,12 @@ import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataItemBuffer;
+import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.Wearable;
 import com.huangsz.android.screentip.common.data.LoadBitmapAsyncTask;
 import com.huangsz.android.screentip.connect.ConnectManager;
 import com.huangsz.android.screentip.connect.model.ConfigModel;
+import com.huangsz.android.screentip.connect.model.SnapshotRequestModel;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
 import com.huangsz.android.screentip.feature.FLAGS;
 
@@ -58,7 +60,7 @@ class CharacterWatchFaceConnector implements
             for (DataEvent event : dataEvents) {
                 if (event.getType() == DataEvent.TYPE_CHANGED) {
                     DataItem item = event.getDataItem();
-                    processConfigurationFor(item);
+                    processDataItem(item);
                 }
             }
             dataEvents.release();
@@ -72,18 +74,24 @@ class CharacterWatchFaceConnector implements
                 @Override
                 public void onResult(DataItemBuffer dataItems) {
                     for (DataItem item : dataItems) {
-                        processConfigurationFor(item);
+                        processDataItem(item);
                     }
                     dataItems.release();
                     mWatchFaceRenderer.updateWatchFace();
                 }
             };
 
-    private void processConfigurationFor(DataItem item) {
-        ConfigModel configModel = ConnectManager.getInstance().maybeGetConfigModel(item);
-        if (configModel == null) {
-            return;
+    private void processDataItem(DataItem item) {
+        ConnectManager connectManager = ConnectManager.getInstance();
+        if (connectManager.containsKey(item, ConfigModel.KEY_CONFIG_MODEL)) {
+            processConfigModel(connectManager.maybeGetConfigModel(item));
         }
+        if (connectManager.getSnapshotRequest(item)) {
+            processSnapshotRequest();
+        }
+    }
+
+    private void processConfigModel(ConfigModel configModel) {
         if (configModel.containsKey(ConfigModel.KEY_TICK_COLOR)) {
             String color = configModel.getDataMap().getString(ConfigModel.KEY_TICK_COLOR);
             mWatchFaceRenderer.setTickColor(Color.parseColor(color));
@@ -101,6 +109,11 @@ class CharacterWatchFaceConnector implements
             new LoadBitmapAsyncTask(
                     mGoogleApiClient, mLoadBitmapCompleteCallback).execute(asset);
         }
+    }
+
+    private void processSnapshotRequest() {
+        Bitmap snapshot = mWatchFaceRenderer.getWatchFaceSnapshot();
+
     }
 
     @Override

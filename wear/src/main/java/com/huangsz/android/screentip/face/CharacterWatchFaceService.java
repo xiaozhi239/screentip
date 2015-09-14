@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
+import android.util.Log;
 import android.view.SurfaceHolder;
 
 import java.lang.ref.WeakReference;
@@ -166,6 +167,7 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
         public void onSurfaceChanged(SurfaceHolder holder, int format, int width, int height) {
             // Override the onSurfaceChanged() method to scale your background to fit the device
             // any time the view changes.
+            Log.d(TAG, "onSurfaceChanged");
             mWatchFaceRenderer.onSurfaceChanged(width, height);
             super.onSurfaceChanged(holder, format, width, height);
         }

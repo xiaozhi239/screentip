@@ -41,6 +41,9 @@ class CharacterWatchFaceRenderer {
 
     private boolean mIsInAmbientMode;
 
+    // The bounds of the watch face.
+    private Rect mBounds;
+
     // properties
     private boolean mLowBitAmbient = false;
     private boolean mBurnInProtection = false;
@@ -106,9 +109,9 @@ class CharacterWatchFaceRenderer {
     }
 
     public void setBackgroundImage(Bitmap image) {
+        mBackgroundBitmap = image;
         int width = mBackgroundScaledBitmap.getWidth();
         int height = mBackgroundScaledBitmap.getHeight();
-        mBackgroundBitmap = image;
         mBackgroundScaledBitmap = Bitmap.createScaledBitmap(mBackgroundBitmap,
                 width, height, true /* filter */);
     }
@@ -144,7 +147,16 @@ class CharacterWatchFaceRenderer {
         }
     }
 
+    public Bitmap getWatchFaceSnapshot() {
+        Bitmap snapshot = Bitmap.createBitmap(mBounds.width(), mBounds.height(), null);
+        Canvas canvas = new Canvas(snapshot);
+        draw(canvas, mBounds);
+        return snapshot;
+    }
+
     public void draw(Canvas canvas, Rect bounds) {
+        mBounds = bounds;
+
         // Update the time
         mCalendar.setTimeInMillis(System.currentTimeMillis());
 

@@ -4,5 +4,4 @@
   <color name="tutorial_button_background">#00ABFF</color>
   <color name="tutorial_button_background_pressed">#0836ED</color>
   <color name="tutorial_button_text">#FFFFFF</color>
-  <color name="tutorial_button_stroke">#FFFFFF</color>
 </resources>

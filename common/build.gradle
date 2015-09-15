@@ -20,6 +20,9 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // the newest is 7.8.0, but AVD is not updated, so emulator can not use.
+    // http://stackoverflow.com/questions/17858215/google-play-services-out-of-date-requires-3159100-but-found-3158130
     compile 'com.google.android.gms:play-services-wearable:6.5.87'
     compile 'com.android.support:appcompat-v7:21.0.3'
 }

@@ -6,11 +6,11 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.Wearable;
 import com.huangsz.android.screentip.connect.model.ConfigModel;
-import com.huangsz.android.screentip.connect.model.SnapshotRequestModel;
 import com.huangsz.android.screentip.connect.model.SnapshotResponseModel;
-
-import java.util.Random;
+import com.huangsz.android.screentip.connect.monitor.NodeMonitor;
 
 /**
  * Manage class for handling model sending and receiving.
@@ -19,13 +19,17 @@ public class ConnectManager {
 
     public static final String DATA_LAYER_WATCH_FACE_CONFIG_PATH = "/watch_face_config";
 
-    private static ConnectManager instance = null;
+    public static final String MESSAGE_LAYER_WATCH_FACE_SNAPSHOT = "/wearable_msg_face_snapshot";
+
+    private static ConnectManager sInstance = null;
+
+    private NodeMonitor mNodeMonitor = NodeMonitor.getInstance();
 
     public static ConnectManager getInstance() {
-        if (instance == null) {
-            instance = new ConnectManager();
+        if (sInstance == null) {
+            sInstance = new ConnectManager();
         }
-        return instance;
+        return sInstance;
     }
 
     /**
@@ -44,13 +48,7 @@ public class ConnectManager {
      * Send a request to watch to take a snapshot of watch face.
      */
     public void sendSnapshotRequest(GoogleApiClient googleApiClient) {
-        new ConnectClient(googleApiClient) {
-            @Override
-            void putData(DataMap dataMap) {
-                dataMap.putLong(SnapshotRequestModel.KEY_SNAPSHOT_REQUEST_MODEL,
-                        System.currentTimeMillis());
-            }
-        }.send();
+        sendMessage(googleApiClient, null);
     }
 
     /**
@@ -82,14 +80,8 @@ public class ConnectManager {
     /**
      * Returns if a snapshot request has been made.
      */
-    public boolean getSnapshotRequest(DataItem item) {
-        return containsKey(item, SnapshotRequestModel.KEY_SNAPSHOT_REQUEST_MODEL);
-//        DataMap dataMap = getDataMapFromItem(item);
-//        if (dataMap != null && dataMap.containsKey(
-//                SnapshotRequestModel.KEY_SNAPSHOT_REQUEST_MODEL)) {
-//            return dataMap.getBoolean(SnapshotRequestModel.KEY_SNAPSHOT_REQUEST_MODEL);
-//        }
-//        return false;
+    public boolean isSnapshotRequest(MessageEvent messageEvent) {
+        return messageEvent.getPath().equals(MESSAGE_LAYER_WATCH_FACE_SNAPSHOT);
     }
 
     @Nullable
@@ -117,5 +109,17 @@ public class ConnectManager {
             return DataMapItem.fromDataItem(item).getDataMap();
         }
         return null;
+    }
+
+    private void sendMessage(GoogleApiClient googleApiClient, @Nullable byte[] content) {
+        if (googleApiClient == null || !googleApiClient.isConnected()) {
+            throw new RuntimeException("GoogleApiClient isn't connected");
+        }
+        if (mNodeMonitor.isEmpty()) {
+            throw new IllegalStateException("No device connected");
+        }
+        String nodeId = mNodeMonitor.getConnectedNodes().get(0).getId();
+        Wearable.MessageApi.sendMessage(googleApiClient, nodeId,
+                MESSAGE_LAYER_WATCH_FACE_SNAPSHOT, null);
     }
 }

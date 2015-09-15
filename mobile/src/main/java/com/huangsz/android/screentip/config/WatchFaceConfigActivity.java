@@ -15,9 +15,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.huangsz.android.screentip.R;
+import com.huangsz.android.screentip.common.utils.HintUtils;
 import com.huangsz.android.screentip.common.utils.ImageUtils;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
 import com.huangsz.android.screentip.connect.tasks.LoadBitmapAsyncTask;
@@ -137,7 +139,11 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
         mUpdateConfigButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mWatchFaceConfigConnector.sendConfigChangeToWatch();
+                if (mWatchFaceConfigConnector.isConnected()) {
+                    mWatchFaceConfigConnector.sendConfigChangeToWatch();
+                } else {
+                    HintUtils.showNoPairedWatchToast(WatchFaceConfigActivity.this);
+                }
             }
         });
     }
@@ -201,7 +207,15 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
     };
 
     private boolean requestWatchFaceSnapshot() {
-        mWatchFaceConfigConnector.sendSnapshotRequestToWatch(mLoadSnapshotCallback);
+        if (mWatchFaceConfigConnector.isConnected()) {
+            try {
+                mWatchFaceConfigConnector.sendSnapshotRequestToWatch(mLoadSnapshotCallback);
+            } catch (IllegalStateException e) {
+                HintUtils.showNoPairedWatchToast(this);
+            }
+        } else {
+            HintUtils.showNoPairedWatchToast(this);
+        }
         // TODO(huangsz): give a sign of waiting here (with a timeout, if timeout, give a toast).
         return true;
     }

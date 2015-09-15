@@ -18,6 +18,7 @@ import com.huangsz.android.screentip.connect.ConnectManager;
 import com.huangsz.android.screentip.connect.model.ConfigModel;
 import com.huangsz.android.screentip.connect.model.SnapshotResponseModel;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
+import com.huangsz.android.screentip.connect.monitor.NodeMonitor;
 import com.huangsz.android.screentip.connect.tasks.LoadBitmapAsyncTask;
 
 /**
@@ -77,6 +78,7 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "Google API connected");
         Wearable.DataApi.addListener(mGoogleApiClient, mOnDataListener);
+        NodeMonitor.getInstance().updateConnectedNodes(mGoogleApiClient);
     }
 
     @Override
@@ -108,6 +110,10 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
         // Bitmap should be changed to Asset before putting to DataMap, which costs time.
         // So we only do it when it is about to send the DataMap.
         mBackgroundImage = backgroundImage;
+    }
+
+    public boolean isConnected() {
+        return mGoogleApiClient != null && mGoogleApiClient.isConnected();
     }
 
     public ConfigModel getConfigModel() {

@@ -1,3 +1,5 @@
 <resources>
   <string name="app_name">Common</string>
+
+  <string name="hint_no_paired_watch">No paired watch is connected to the phone.</string>
 </resources>

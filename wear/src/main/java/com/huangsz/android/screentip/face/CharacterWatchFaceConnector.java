@@ -15,6 +15,8 @@ import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataItemBuffer;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
 import com.huangsz.android.screentip.common.utils.ImageUtils;
 import com.huangsz.android.screentip.connect.ConnectManager;
@@ -31,6 +33,8 @@ class CharacterWatchFaceConnector implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "CWatchFaceConnector";
+
+    private ConnectManager mConnectManager;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -55,6 +59,7 @@ class CharacterWatchFaceConnector implements
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
+        mConnectManager = ConnectManager.getInstance();
     }
 
     private final DataApi.DataListener mOnDataListener = new DataApi.DataListener() {
@@ -84,13 +89,18 @@ class CharacterWatchFaceConnector implements
                 }
             };
 
-    private void processDataItem(DataItem item) {
-        ConnectManager connectManager = ConnectManager.getInstance();
-        if (connectManager.containsKey(item, ConfigModel.KEY_CONFIG_MODEL)) {
-            processConfigModel(connectManager.maybeGetConfigModel(item));
+    private final MessageApi.MessageListener mMessageListener = new MessageApi.MessageListener() {
+        @Override
+        public void onMessageReceived(MessageEvent messageEvent) {
+            if (mConnectManager.isSnapshotRequest(messageEvent)) {
+                processSnapshotRequest();
+            }
         }
-        if (connectManager.getSnapshotRequest(item)) {
-            processSnapshotRequest();
+    };
+
+    private void processDataItem(DataItem item) {
+        if (mConnectManager.containsKey(item, ConfigModel.KEY_CONFIG_MODEL)) {
+            processConfigModel(mConnectManager.maybeGetConfigModel(item));
         }
     }
 
@@ -125,15 +135,17 @@ class CharacterWatchFaceConnector implements
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "GoogleApiClient connected.");
-        Wearable.DataApi.addListener(mGoogleApiClient, mOnDataListener);
         Wearable.DataApi.getDataItems(mGoogleApiClient).setResultCallback(
                 mOnConnectedResultCallback);
+        Wearable.DataApi.addListener(mGoogleApiClient, mOnDataListener);
+        Wearable.MessageApi.addListener(mGoogleApiClient, mMessageListener);
     }
 
     @Override
     public void onConnectionSuspended(int cause) {
         Log.i(TAG, "GoogleApiClient suspended with cause: " + cause);
         Wearable.DataApi.removeListener(mGoogleApiClient, mOnDataListener);
+        Wearable.MessageApi.removeListener(mGoogleApiClient, mMessageListener);
     }
 
     @Override

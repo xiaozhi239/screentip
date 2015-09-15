@@ -6,8 +6,8 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -154,7 +154,7 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_watch_face_config, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -164,9 +164,8 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.config_action_share) {
+            return shareWatchFace();
         }
 
         return super.onOptionsItemSelected(item);
@@ -183,6 +182,20 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
             mWatchFaceConfigConnector.setBackgroundImage(bitmap);
             mBackgroundImageView.setImageBitmap(bitmap);
         }
+    }
+
+    private boolean shareWatchFace() {
+        // There is a god damn Android bug when using ShareActionProvider.
+        // The icon is not clickable when in action bar, or the provider won't
+        // handle followup actions. Using startActivity is much better.
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
+        shareIntent.setType("text/plain");
+        startActivity(Intent.createChooser(shareIntent, "Share"));
+        return true;
+//        shareIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
+//        shareIntent.setType("image/jpeg");
     }
 
     private static class ConfigHandler extends Handler {

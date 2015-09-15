@@ -18,10 +18,6 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".MainActivity"
-            android:label="@string/title_activity_main" >
-        </activity>
-        <activity
             android:name=".config.WatchFaceConfigActivity"
             android:label="@string/title_activity_watch_face_config" >
             <intent-filter>

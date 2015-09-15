@@ -1,9 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:context="com.huangsz.android.screentip.config.WatchFaceConfigActivity">
-  <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
-        app:showAsAction="never"/>
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+  <item android:id="@+id/config_action_share"
+        app:showAsAction="ifRoom"
+        android:title="@string/config_action_share"
+        android:icon="@drawable/abc_ic_menu_share_mtrl_alpha"
+        android:enabled="true"/>
 </menu>

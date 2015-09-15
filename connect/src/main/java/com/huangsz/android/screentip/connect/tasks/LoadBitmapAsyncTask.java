@@ -1,4 +1,4 @@
-package com.huangsz.android.screentip.common.data;
+package com.huangsz.android.screentip.connect.tasks;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

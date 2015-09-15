@@ -15,13 +15,11 @@ import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataItemBuffer;
-import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.Wearable;
-import com.huangsz.android.screentip.common.data.LoadBitmapAsyncTask;
 import com.huangsz.android.screentip.connect.ConnectManager;
 import com.huangsz.android.screentip.connect.model.ConfigModel;
-import com.huangsz.android.screentip.connect.model.SnapshotRequestModel;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
+import com.huangsz.android.screentip.connect.tasks.LoadBitmapAsyncTask;
 import com.huangsz.android.screentip.feature.FLAGS;
 
 /**

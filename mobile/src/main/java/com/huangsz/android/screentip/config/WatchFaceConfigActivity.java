@@ -20,8 +20,10 @@ import com.google.common.annotations.VisibleForTesting;
 import com.huangsz.android.screentip.R;
 import com.huangsz.android.screentip.common.utils.ImageUtils;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
+import com.huangsz.android.screentip.connect.tasks.LoadBitmapAsyncTask;
 import com.huangsz.android.screentip.feature.FLAGS;
 import com.huangsz.android.screentip.widget.ColorChooserDialog;
+import com.huangsz.android.screentip.widget.ShareWatchFaceDialog;
 import com.huangsz.android.screentip.widget.TextConfigDialog;
 
 import java.lang.ref.WeakReference;
@@ -76,7 +78,8 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                     @Override
                     public void onClick(View v) {
                         if (mTickColorDialog == null) {
-                            mTickColorDialog = ColorChooserDialog.newInstance(getString(R.string.watchface_ticks_color),
+                            mTickColorDialog = ColorChooserDialog.newInstance(
+                                    getString(R.string.watchface_ticks_color),
                                     mConfigHandler, ConfigHandler.MESSAGE_TICK_COLOR);
                         }
                         mTickColorDialog.show(getFragmentManager(), "");
@@ -90,7 +93,8 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                     @Override
                     public void onClick(View v) {
                         if (mHandColorDialog == null) {
-                            mHandColorDialog = ColorChooserDialog.newInstance(getString(R.string.watchface_hands_color),
+                            mHandColorDialog = ColorChooserDialog.newInstance(
+                                    getString(R.string.watchface_hands_color),
                                     mConfigHandler, ConfigHandler.MESSAGE_HAND_COLOR);
                         }
                         mHandColorDialog.show(getFragmentManager(), "");
@@ -165,7 +169,7 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         if (id == R.id.config_action_share) {
-            return shareWatchFace();
+            return requestWatchFaceSnapshot();
         }
 
         return super.onOptionsItemSelected(item);
@@ -184,18 +188,31 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
         }
     }
 
-    private boolean shareWatchFace() {
-        // There is a god damn Android bug when using ShareActionProvider.
-        // The icon is not clickable when in action bar, or the provider won't
-        // handle followup actions. Using startActivity is much better.
+    private LoadBitmapAsyncTask.PostExecuteCallback mLoadSnapshotCallback =
+            new LoadBitmapAsyncTask.PostExecuteCallback() {
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap) {
+            // TODO(huangsz): end the sign of waiting here.
+            ShareWatchFaceDialog dialog = ShareWatchFaceDialog.newInstance(
+                    getResources().getString(R.string.watchface_share),
+                    mConfigHandler, ConfigHandler.MESSAGE_SNAPSHOT, bitmap);
+            dialog.show(getFragmentManager(), "");
+        }
+    };
+
+    private boolean requestWatchFaceSnapshot() {
+        mWatchFaceConfigConnector.sendSnapshotRequestToWatch(mLoadSnapshotCallback);
+        // TODO(huangsz): give a sign of waiting here (with a timeout, if timeout, give a toast).
+        return true;
+    }
+
+    private void shareWatchFaceSnapshot(Bitmap snapshot) {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
-        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_STREAM, ImageUtils.getImageUriFromBitmap(
+                snapshot, getContentResolver()));
+        shareIntent.setType("image/*");
         startActivity(Intent.createChooser(shareIntent, "Share"));
-        return true;
-//        shareIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
-//        shareIntent.setType("image/jpeg");
     }
 
     private static class ConfigHandler extends Handler {
@@ -205,6 +222,8 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
         private static final int MESSAGE_HAND_COLOR = 2;
 
         private static final int MESSAGE_TEXT = 3;
+
+        private static final int MESSAGE_SNAPSHOT = 4;
 
         private final WeakReference<WatchFaceConfigActivity> activityReference;
 
@@ -238,6 +257,11 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                                 textModel.getDataMap().getString(TextConfigModel.KEY_TEXT_CONTENT));
                         activity.mWatchFaceConfigConnector.setTextConfigModel(textModel);
                     }
+                    break;
+                case MESSAGE_SNAPSHOT:
+                    Bitmap snapshot = (Bitmap) msg.obj;
+                    activity.shareWatchFaceSnapshot(snapshot);
+                    break;
                 default:
                     super.handleMessage(msg);
             }

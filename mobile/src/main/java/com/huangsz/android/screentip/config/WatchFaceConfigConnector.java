@@ -8,13 +8,17 @@ import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Asset;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.Wearable;
-import com.google.common.annotations.VisibleForTesting;
+import com.huangsz.android.screentip.common.utils.ImageUtils;
 import com.huangsz.android.screentip.connect.ConnectManager;
 import com.huangsz.android.screentip.connect.model.ConfigModel;
+import com.huangsz.android.screentip.connect.model.SnapshotResponseModel;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
-
-import java.io.ByteArrayOutputStream;
+import com.huangsz.android.screentip.connect.tasks.LoadBitmapAsyncTask;
 
 /**
  * Control the connection between the configuration activity and the watch face service.
@@ -29,6 +33,8 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
     private GoogleApiClient mGoogleApiClient;
 
     private Bitmap mBackgroundImage;
+
+    LoadBitmapAsyncTask.PostExecuteCallback mLoadSnapshotCallback;
 
     WatchFaceConfigConnector(Context context) {
         mGoogleApiClient = new GoogleApiClient.Builder(context)
@@ -52,7 +58,7 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
 
     public void sendConfigChangeToWatch() {
         if (mBackgroundImage != null) {
-            Asset asset = compressAndCreateAssetFromBitmap(mBackgroundImage);
+            Asset asset = ImageUtils.compressAndCreateAssetFromBitmap(mBackgroundImage);
             getConfigModel().getDataMap().putAsset(ConfigModel.KEY_BACKGROUND_IMG, asset);
         }
         if (!getConfigModel().isEmpty()) {
@@ -61,9 +67,16 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
         }
     }
 
+    public void sendSnapshotRequestToWatch(
+            LoadBitmapAsyncTask.PostExecuteCallback loadSnapshotCallback) {
+        ConnectManager.getInstance().sendSnapshotRequest(mGoogleApiClient);
+        mLoadSnapshotCallback = loadSnapshotCallback;
+    }
+
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "Google API connected");
+        Wearable.DataApi.addListener(mGoogleApiClient, mOnDataListener);
     }
 
     @Override
@@ -71,6 +84,7 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
         // Applications should disable UI components that require the service,
         // and wait for a call to onConnected(Bundle) to re-enable them.
         Log.i(TAG, "Google API connection suspended with cause : " + cause);
+        Wearable.DataApi.removeListener(mGoogleApiClient, mOnDataListener);
     }
 
     @Override
@@ -103,18 +117,29 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
         return mConfigModel;
     }
 
-    @VisibleForTesting
-    protected GoogleApiClient getGoogleApiClient() {
-        return mGoogleApiClient;
-    }
-
-    private Asset compressAndCreateAssetFromBitmap(Bitmap image) {
-        final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.PNG, 100, byteStream);
-        return Asset.createFromBytes(byteStream.toByteArray());
-    }
-
     private void resetConfig() {
         mConfigModel = null;
+    }
+
+    private final DataApi.DataListener mOnDataListener = new DataApi.DataListener() {
+        @Override
+        public void onDataChanged(DataEventBuffer dataEvents) {
+            for (DataEvent event : dataEvents) {
+                if (event.getType() == DataEvent.TYPE_CHANGED) {
+                    DataItem item = event.getDataItem();
+                    processDataItem(item);
+                }
+            }
+            dataEvents.release();
+         }
+    };
+
+    private void processDataItem(DataItem item) {
+        ConnectManager connectManager = ConnectManager.getInstance();
+        SnapshotResponseModel snapshotResponse = connectManager.maybeGetSnapshotResponseModel(item);
+        if (snapshotResponse != null) {
+            new LoadBitmapAsyncTask(mGoogleApiClient, mLoadSnapshotCallback)
+                    .execute(snapshotResponse.getSnapshot());
+        }
     }
 }

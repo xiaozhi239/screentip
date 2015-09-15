@@ -3,19 +3,12 @@ package com.huangsz.android.screentip.config;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-import com.google.android.gms.wearable.DataApi;
-import com.google.android.gms.wearable.DataEvent;
-import com.google.android.gms.wearable.DataEventBuffer;
-import com.google.android.gms.wearable.Wearable;
 import com.huangsz.android.screentip.BuildConfig;
-import com.huangsz.android.screentip.connect.ConnectManager;
 import com.huangsz.android.screentip.connect.model.ConfigModel;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
-import com.huangsz.android.screentip.widget.TextConfigDialog;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
@@ -34,8 +27,6 @@ public class WatchFaceConfigConnectorTest {
     @Mock private Context mAppContext;
 
     private WatchFaceConfigConnector connector;
-
-    private ConfigModel configModel;
 
     @Before
     public void setUp() {

@@ -16,8 +16,10 @@ import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.Wearable;
+import com.huangsz.android.screentip.common.utils.ImageUtils;
 import com.huangsz.android.screentip.connect.ConnectManager;
 import com.huangsz.android.screentip.connect.model.ConfigModel;
+import com.huangsz.android.screentip.connect.model.SnapshotResponseModel;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
 import com.huangsz.android.screentip.connect.tasks.LoadBitmapAsyncTask;
 import com.huangsz.android.screentip.feature.FLAGS;
@@ -38,7 +40,10 @@ class CharacterWatchFaceConnector implements
             new LoadBitmapAsyncTask.PostExecuteCallback() {
         @Override
         public void onBitmapLoaded(Bitmap bitmap) {
-            mWatchFaceRenderer.setBackgroundImage(bitmap);
+            if (bitmap != null) {
+                // bitmap = null happens in some rare cases, such as sometimes when just installed.
+                mWatchFaceRenderer.setBackgroundImage(bitmap);
+            }
         }
     };
 
@@ -111,7 +116,10 @@ class CharacterWatchFaceConnector implements
 
     private void processSnapshotRequest() {
         Bitmap snapshot = mWatchFaceRenderer.getWatchFaceSnapshot();
-
+        Asset asset = ImageUtils.compressAndCreateAssetFromBitmap(snapshot);
+        SnapshotResponseModel response = new SnapshotResponseModel();
+        response.setSnapshot(asset);
+        ConnectManager.getInstance().sendSnapshotResponse(mGoogleApiClient, response);
     }
 
     @Override
@@ -125,6 +133,7 @@ class CharacterWatchFaceConnector implements
     @Override
     public void onConnectionSuspended(int cause) {
         Log.i(TAG, "GoogleApiClient suspended with cause: " + cause);
+        Wearable.DataApi.removeListener(mGoogleApiClient, mOnDataListener);
     }
 
     @Override

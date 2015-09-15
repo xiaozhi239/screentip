@@ -1,11 +1,15 @@
 package com.huangsz.android.screentip.common.utils;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.google.android.gms.wearable.Asset;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class ImageUtils {
@@ -25,4 +29,23 @@ public class ImageUtils {
         }
         return null;
     }
+
+    /**
+     * Create asset from bitmap.
+     */
+    public static Asset compressAndCreateAssetFromBitmap(Bitmap image) {
+        final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.PNG, 100, byteStream);
+        return Asset.createFromBytes(byteStream.toByteArray());
+    }
+
+    /**
+     * Get the image uri from the bitmap.
+     */
+    public static Uri getImageUriFromBitmap(Bitmap bitmap, ContentResolver contentResolver) {
+        String path = MediaStore.Images.Media.insertImage(contentResolver,
+                bitmap, "Image Description", null);
+        return Uri.parse(path);
+    }
+
 }

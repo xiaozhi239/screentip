@@ -148,7 +148,7 @@ class CharacterWatchFaceRenderer {
     }
 
     public Bitmap getWatchFaceSnapshot() {
-        Bitmap snapshot = Bitmap.createBitmap(mBounds.width(), mBounds.height(), null);
+        Bitmap snapshot = Bitmap.createBitmap(mBounds.width(), mBounds.height(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(snapshot);
         draw(canvas, mBounds);
         return snapshot;

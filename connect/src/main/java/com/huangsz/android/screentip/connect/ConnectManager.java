@@ -8,6 +8,9 @@ import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.huangsz.android.screentip.connect.model.ConfigModel;
 import com.huangsz.android.screentip.connect.model.SnapshotRequestModel;
+import com.huangsz.android.screentip.connect.model.SnapshotResponseModel;
+
+import java.util.Random;
 
 /**
  * Manage class for handling model sending and receiving.
@@ -44,7 +47,22 @@ public class ConnectManager {
         new ConnectClient(googleApiClient) {
             @Override
             void putData(DataMap dataMap) {
-                dataMap.putBoolean(SnapshotRequestModel.KEY_SNAPSHOT_REQUEST_MODEL, true);
+                dataMap.putLong(SnapshotRequestModel.KEY_SNAPSHOT_REQUEST_MODEL,
+                        System.currentTimeMillis());
+            }
+        }.send();
+    }
+
+    /**
+     * Send a snapshot response from wear to mobile.
+     */
+    public void sendSnapshotResponse(GoogleApiClient googleApiClient,
+                                     final SnapshotResponseModel response) {
+        new ConnectClient(googleApiClient) {
+            @Override
+            void putData(DataMap dataMap) {
+                dataMap.putDataMap(SnapshotResponseModel.KEY_SNAPSHOT_RESPONSE_MODEL,
+                        response.getDataMap());
             }
         }.send();
     }
@@ -65,12 +83,24 @@ public class ConnectManager {
      * Returns if a snapshot request has been made.
      */
     public boolean getSnapshotRequest(DataItem item) {
+        return containsKey(item, SnapshotRequestModel.KEY_SNAPSHOT_REQUEST_MODEL);
+//        DataMap dataMap = getDataMapFromItem(item);
+//        if (dataMap != null && dataMap.containsKey(
+//                SnapshotRequestModel.KEY_SNAPSHOT_REQUEST_MODEL)) {
+//            return dataMap.getBoolean(SnapshotRequestModel.KEY_SNAPSHOT_REQUEST_MODEL);
+//        }
+//        return false;
+    }
+
+    @Nullable
+    public SnapshotResponseModel maybeGetSnapshotResponseModel(DataItem item) {
         DataMap dataMap = getDataMapFromItem(item);
-        if (dataMap != null && dataMap.containsKey(
-                SnapshotRequestModel.KEY_SNAPSHOT_REQUEST_MODEL)) {
-            return dataMap.getBoolean(SnapshotRequestModel.KEY_SNAPSHOT_REQUEST_MODEL);
+        if (dataMap != null
+                && dataMap.containsKey(SnapshotResponseModel.KEY_SNAPSHOT_RESPONSE_MODEL)) {
+            return new SnapshotResponseModel(dataMap.getDataMap(
+                    SnapshotResponseModel.KEY_SNAPSHOT_RESPONSE_MODEL));
         }
-        return false;
+        return null;
     }
 
     /**

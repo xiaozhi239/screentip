@@ -1,31 +1,30 @@
 <resources>
+  <!-- App name and activity title -->
   <string name="app_name">Woface</string>
-  <string name="title_activity_main">MainActivity</string>
   <string name="title_activity_watch_face_config">Watch Face Configuration</string>
-  <string name="title_activity_tutorial">Welcome</string>
 
-  <!-- Menu items in config activity -->
-  <string name="config_action_share">Share</string>
 
-  <string name="watchface_character_color">Watch Face Character Color</string>
+  <!-- Hint in whole app -->
+  <string name="hint_loading">Loading...</string>
+  <string name="button_confirm">Yes</string>
+  <string name="button_cancel">Cancel</string>
 
-  <!-- Dialog titles of config activity. -->
-  <string name="watchface_ticks_color">Watch Face Ticks Color</string>
-  <string name="watchface_hands_color">Watch Face Hands Color</string>
-  <string name="watchface_text">Text on watch face</string>
-  <string name="watchface_share">Share your watch face</string>
 
-  <string name="text_update_config">Update Configuration</string>
+  <!-- Miscellaneous stuff in tutorial activity -->
   <string name="text_start_journey">S t a r t</string>
-
   <string name="text_tutorial_setup_description">Long press your watch face on the home screen till
     it shows the watch face picker. Select WoFace and wait for it to be presented.
     \nThen from your paired phone, you can use WoFace to customize your watch face. Put your
     girlfriend\'s picture as your watch face!</string>
 
-  <string name="hello_world">Hello world!</string>
 
-  <!-- TextConfigDialog -->
+  <!-- Miscellaneous stuff in config activity -->
+  <string name="config_action_share">Share</string>
+  <string name="text_update_config">Update Configuration</string>
+  <string name="toast_fail_snapshot">Fail to take screenshot from watch, check if your watch face
+    is configured and visible</string>
+
+  <!-- TextConfigDialog in config activity -->
   <string name="hint_config_text_content">Write your content</string>
   <string name="label_text_content">Content</string>
   <string name="label_text_color">Color</string>
@@ -33,7 +32,12 @@
   <string name="label_coordinate_x">Coordinate X</string>
   <string name="label_coordinate_y">Coordinate Y</string>
 
-  <string name="button_confirm">Yes</string>
-  <string name="button_cancel">Cancel</string>
+  <!-- Dialog titles of config activity. -->
+  <string name="watchface_ticks_color">Watch Face Ticks Color</string>
+  <string name="watchface_hands_color">Watch Face Hands Color</string>
+  <string name="watchface_text">Text on watch face</string>
+  <string name="watchface_share">Share your watch face</string>
+  <string name="watchface_snapshot_progress">Taking screenshot from watch</string>
+
 
 </resources>

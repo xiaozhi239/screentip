@@ -8,9 +8,9 @@ import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
+import com.huangsz.android.screentip.connect.message.MessageConstants;
 import com.huangsz.android.screentip.connect.model.ConfigModel;
 import com.huangsz.android.screentip.connect.model.SnapshotResponseModel;
-import com.huangsz.android.screentip.connect.monitor.NodeMonitor;
 
 /**
  * Manage class for handling model sending and receiving.
@@ -19,11 +19,8 @@ public class ConnectManager {
 
     public static final String DATA_LAYER_WATCH_FACE_CONFIG_PATH = "/watch_face_config";
 
-    public static final String MESSAGE_LAYER_WATCH_FACE_SNAPSHOT = "/wearable_msg_face_snapshot";
 
     private static ConnectManager sInstance = null;
-
-    private NodeMonitor mNodeMonitor = NodeMonitor.getInstance();
 
     public static ConnectManager getInstance() {
         if (sInstance == null) {
@@ -47,8 +44,8 @@ public class ConnectManager {
     /**
      * Send a request to watch to take a snapshot of watch face.
      */
-    public void sendSnapshotRequest(GoogleApiClient googleApiClient) {
-        sendMessage(googleApiClient, null);
+    public void sendSnapshotRequest(GoogleApiClient googleApiClient, String nodeId) {
+        sendMessage(googleApiClient, nodeId, null);
     }
 
     /**
@@ -81,7 +78,7 @@ public class ConnectManager {
      * Returns if a snapshot request has been made.
      */
     public boolean isSnapshotRequest(MessageEvent messageEvent) {
-        return messageEvent.getPath().equals(MESSAGE_LAYER_WATCH_FACE_SNAPSHOT);
+        return messageEvent.getPath().equals(MessageConstants.MESSAGE_SNAPSHOT_REQUEST);
     }
 
     @Nullable
@@ -111,15 +108,12 @@ public class ConnectManager {
         return null;
     }
 
-    private void sendMessage(GoogleApiClient googleApiClient, @Nullable byte[] content) {
+    private void sendMessage(GoogleApiClient googleApiClient, String nodeId,
+                             @Nullable byte[] content) {
         if (googleApiClient == null || !googleApiClient.isConnected()) {
             throw new RuntimeException("GoogleApiClient isn't connected");
         }
-        if (mNodeMonitor.isEmpty()) {
-            throw new IllegalStateException("No device connected");
-        }
-        String nodeId = mNodeMonitor.getConnectedNodes().get(0).getId();
         Wearable.MessageApi.sendMessage(googleApiClient, nodeId,
-                MESSAGE_LAYER_WATCH_FACE_SNAPSHOT, null);
+                MessageConstants.MESSAGE_SNAPSHOT_REQUEST, content);
     }
 }

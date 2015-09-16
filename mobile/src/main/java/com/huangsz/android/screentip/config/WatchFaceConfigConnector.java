@@ -3,6 +3,8 @@ package com.huangsz.android.screentip.config;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -18,7 +20,7 @@ import com.huangsz.android.screentip.connect.ConnectManager;
 import com.huangsz.android.screentip.connect.model.ConfigModel;
 import com.huangsz.android.screentip.connect.model.SnapshotResponseModel;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
-import com.huangsz.android.screentip.connect.monitor.NodeMonitor;
+import com.huangsz.android.screentip.nodes.NodeMonitor;
 import com.huangsz.android.screentip.connect.tasks.LoadBitmapAsyncTask;
 
 /**
@@ -31,13 +33,28 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
 
     private ConfigModel mConfigModel;
 
-    private GoogleApiClient mGoogleApiClient;
-
     private Bitmap mBackgroundImage;
 
-    LoadBitmapAsyncTask.PostExecuteCallback mLoadSnapshotCallback;
+    private GoogleApiClient mGoogleApiClient;
 
-    WatchFaceConfigConnector(Context context) {
+    private NodeMonitor mNodeMonitor;
+
+    private Handler mUiHandler;
+
+    LoadBitmapAsyncTask.PostExecuteCallback mLoadSnapshotCallback
+            = new LoadBitmapAsyncTask.PostExecuteCallback() {
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap) {
+            Message message = new Message();
+            message.what = WatchFaceConfigActivity.ConfigHandler.MESSAGE_SNAPSHOT_LOADED;
+            message.obj = bitmap;
+            mUiHandler.sendMessage(message);
+        }
+    };
+
+    WatchFaceConfigConnector(Context context, NodeMonitor nodeMonitor, Handler uiHandler) {
+        mNodeMonitor = nodeMonitor;
+        mUiHandler = uiHandler;
         mGoogleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -68,10 +85,16 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
         }
     }
 
-    public void sendSnapshotRequestToWatch(
-            LoadBitmapAsyncTask.PostExecuteCallback loadSnapshotCallback) {
-        ConnectManager.getInstance().sendSnapshotRequest(mGoogleApiClient);
-        mLoadSnapshotCallback = loadSnapshotCallback;
+    /**
+     * Send a snapshot request to watch. Note that you should check if there is any available node
+     * before calling this method.
+     */
+    public void sendSnapshotRequestToWatch() {
+        if (mNodeMonitor.isEmpty() || mNodeMonitor.getAvailableNode() == null) {
+            throw new RuntimeException("There is no available watch connected");
+        }
+        String nodeId = mNodeMonitor.getAvailableNode().getId();
+        ConnectManager.getInstance().sendSnapshotRequest(mGoogleApiClient, nodeId);
     }
 
     @Override
@@ -112,8 +135,9 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
         mBackgroundImage = backgroundImage;
     }
 
-    public boolean isConnected() {
-        return mGoogleApiClient != null && mGoogleApiClient.isConnected();
+    public boolean isConnectedToWear() {
+        return mGoogleApiClient != null && mGoogleApiClient.isConnected()
+                && mNodeMonitor.hasAvailableNode();
     }
 
     public ConfigModel getConfigModel() {

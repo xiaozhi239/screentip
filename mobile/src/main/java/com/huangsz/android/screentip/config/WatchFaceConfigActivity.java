@@ -1,5 +1,6 @@
 package com.huangsz.android.screentip.config;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -22,17 +23,21 @@ import com.huangsz.android.screentip.R;
 import com.huangsz.android.screentip.common.utils.HintUtils;
 import com.huangsz.android.screentip.common.utils.ImageUtils;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
-import com.huangsz.android.screentip.connect.tasks.LoadBitmapAsyncTask;
 import com.huangsz.android.screentip.feature.FLAGS;
+import com.huangsz.android.screentip.nodes.NodeMonitor;
 import com.huangsz.android.screentip.widget.ColorChooserDialog;
 import com.huangsz.android.screentip.widget.ShareWatchFaceDialog;
 import com.huangsz.android.screentip.widget.TextConfigDialog;
 
 import java.lang.ref.WeakReference;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class WatchFaceConfigActivity extends ActionBarActivity {
 
     private static final int CODE_SELECT_BACKGROUND_PICTURE = 0;
+
+    private static final long DISMISS_SNAPSHOT_WAITING_IN_MILLIS = 5000;
 
     private View mConfigTickColorPreview;
 
@@ -47,6 +52,8 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
     @VisibleForTesting
     protected WatchFaceConfigConnector mWatchFaceConfigConnector;
 
+    private NodeMonitor mNodeMonitor;
+
     private final Handler mConfigHandler = new ConfigHandler(this);
 
     @VisibleForTesting
@@ -58,6 +65,8 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
     @VisibleForTesting
     protected TextConfigDialog mTextConfigDialog;
 
+    private ProgressDialog mProgressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +77,8 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                 (TextView) findViewById(R.id.configuration_character_text_preview);
         mUpdateConfigButton = (Button) findViewById(R.id.configuration_update_button);
         mBackgroundImageView = (ImageView) findViewById(R.id.configuration_background);
-        mWatchFaceConfigConnector = new WatchFaceConfigConnector(this);
+        mNodeMonitor = NodeMonitor.getInstance();
+        mWatchFaceConfigConnector = new WatchFaceConfigConnector(this, mNodeMonitor, mConfigHandler);
         setupListeners();
     }
 
@@ -139,7 +149,7 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
         mUpdateConfigButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mWatchFaceConfigConnector.isConnected()) {
+                if (mWatchFaceConfigConnector.isConnectedToWear()) {
                     mWatchFaceConfigConnector.sendConfigChangeToWatch();
                 } else {
                     HintUtils.showNoPairedWatchToast(WatchFaceConfigActivity.this);
@@ -194,29 +204,25 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
         }
     }
 
-    private LoadBitmapAsyncTask.PostExecuteCallback mLoadSnapshotCallback =
-            new LoadBitmapAsyncTask.PostExecuteCallback() {
-        @Override
-        public void onBitmapLoaded(Bitmap bitmap) {
-            // TODO(huangsz): end the sign of waiting here.
-            ShareWatchFaceDialog dialog = ShareWatchFaceDialog.newInstance(
-                    getResources().getString(R.string.watchface_share),
-                    mConfigHandler, ConfigHandler.MESSAGE_SNAPSHOT, bitmap);
-            dialog.show(getFragmentManager(), "");
-        }
-    };
+    private void receiveWatchFaceSnapshot(Bitmap bitmap) {
+        HintUtils.dismissDialog(mProgressDialog);
+        ShareWatchFaceDialog dialog = ShareWatchFaceDialog.newInstance(
+                getResources().getString(R.string.watchface_share),
+                mConfigHandler, ConfigHandler.MESSAGE_SNAPSHOT_SHARE, bitmap);
+        dialog.show(getFragmentManager(), "");
+    }
+
+    private void failWatchFaceSnapshot() {
+        Toast.makeText(this, getString(R.string.toast_fail_snapshot), Toast.LENGTH_LONG).show();
+    }
 
     private boolean requestWatchFaceSnapshot() {
-        if (mWatchFaceConfigConnector.isConnected()) {
-            try {
-                mWatchFaceConfigConnector.sendSnapshotRequestToWatch(mLoadSnapshotCallback);
-            } catch (IllegalStateException e) {
-                HintUtils.showNoPairedWatchToast(this);
-            }
+        if (mWatchFaceConfigConnector.isConnectedToWear()) {
+            showSnapshotProgressDialog();
+            mWatchFaceConfigConnector.sendSnapshotRequestToWatch();
         } else {
             HintUtils.showNoPairedWatchToast(this);
         }
-        // TODO(huangsz): give a sign of waiting here (with a timeout, if timeout, give a toast).
         return true;
     }
 
@@ -229,15 +235,37 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
         startActivity(Intent.createChooser(shareIntent, "Share"));
     }
 
-    private static class ConfigHandler extends Handler {
+    private void showSnapshotProgressDialog() {
+        mProgressDialog = HintUtils.showProgressDialog(this,
+                getString(R.string.watchface_snapshot_progress),
+                getString(R.string.hint_loading),
+                true);
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (mProgressDialog.isShowing()) {
+                    mProgressDialog.dismiss();
+                    Message message = new Message();
+                    message.what = ConfigHandler.MESSAGE_SNAPSHOT_TIMEOUT;
+                    mConfigHandler.sendMessage(message);
+                }
+            }
+        }, DISMISS_SNAPSHOT_WAITING_IN_MILLIS);
+    }
 
-        private static final int MESSAGE_TICK_COLOR = 1;
+    public static class ConfigHandler extends Handler {
 
-        private static final int MESSAGE_HAND_COLOR = 2;
+        public static final int MESSAGE_TICK_COLOR = 1;
 
-        private static final int MESSAGE_TEXT = 3;
+        public static final int MESSAGE_HAND_COLOR = 2;
 
-        private static final int MESSAGE_SNAPSHOT = 4;
+        public static final int MESSAGE_TEXT = 3;
+
+        public static final int MESSAGE_SNAPSHOT_SHARE = 4;
+
+        public static final int MESSAGE_SNAPSHOT_LOADED = 5;
+
+        public static final int MESSAGE_SNAPSHOT_TIMEOUT = 6;
 
         private final WeakReference<WatchFaceConfigActivity> activityReference;
 
@@ -272,9 +300,16 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                         activity.mWatchFaceConfigConnector.setTextConfigModel(textModel);
                     }
                     break;
-                case MESSAGE_SNAPSHOT:
+                case MESSAGE_SNAPSHOT_SHARE:
+                    Bitmap shareSnapshot = (Bitmap) msg.obj;
+                    activity.shareWatchFaceSnapshot(shareSnapshot);
+                    break;
+                case MESSAGE_SNAPSHOT_LOADED:
                     Bitmap snapshot = (Bitmap) msg.obj;
-                    activity.shareWatchFaceSnapshot(snapshot);
+                    activity.receiveWatchFaceSnapshot(snapshot);
+                    break;
+                case MESSAGE_SNAPSHOT_TIMEOUT:
+                    activity.failWatchFaceSnapshot();
                     break;
                 default:
                     super.handleMessage(msg);

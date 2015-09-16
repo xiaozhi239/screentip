@@ -36,7 +36,7 @@
   <string name="watchface_ticks_color">Watch Face Ticks Color</string>
   <string name="watchface_hands_color">Watch Face Hands Color</string>
   <string name="watchface_text">Text on watch face</string>
-  <string name="watchface_share">Share your watch face</string>
+  <string name="watchface_snapshot_share">Share your watch face</string>
   <string name="watchface_snapshot_progress">Taking screenshot from watch</string>
 
 

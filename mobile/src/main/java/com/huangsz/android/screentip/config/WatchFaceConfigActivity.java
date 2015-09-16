@@ -207,7 +207,7 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
     private void receiveWatchFaceSnapshot(Bitmap bitmap) {
         HintUtils.dismissDialog(mProgressDialog);
         ShareWatchFaceDialog dialog = ShareWatchFaceDialog.newInstance(
-                getResources().getString(R.string.watchface_share),
+                getResources().getString(R.string.watchface_snapshot_share),
                 mConfigHandler, ConfigHandler.MESSAGE_SNAPSHOT_SHARE, bitmap);
         dialog.show(getFragmentManager(), "");
     }

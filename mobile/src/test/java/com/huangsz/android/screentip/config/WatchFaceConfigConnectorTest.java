@@ -2,10 +2,12 @@ package com.huangsz.android.screentip.config;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Handler;
 
 import com.huangsz.android.screentip.BuildConfig;
 import com.huangsz.android.screentip.connect.model.ConfigModel;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
+import com.huangsz.android.screentip.nodes.NodeMonitor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -21,17 +23,22 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class)
+@Config(constants = BuildConfig.class, sdk = 21)
 public class WatchFaceConfigConnectorTest {
 
     @Mock private Context mAppContext;
+
+    @Mock private Handler mUiHandler;
+
+    @Mock private NodeMonitor mNodeMonitor;
 
     private WatchFaceConfigConnector connector;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        connector = new WatchFaceConfigConnector(RuntimeEnvironment.application);
+        connector = new WatchFaceConfigConnector(RuntimeEnvironment.application,
+                mNodeMonitor, mUiHandler);
     }
 
     @Test

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 
 import com.huangsz.android.screentip.BuildConfig;
 import com.huangsz.android.screentip.R;
+import com.huangsz.android.screentip.nodes.NodeMonitor;
 import com.huangsz.android.screentip.widget.ColorChooserDialog;
 import com.huangsz.android.screentip.widget.TextConfigDialog;
 
@@ -38,6 +39,9 @@ public class WatchFaceConfigActivityTest {
 
     @Mock
     private WatchFaceConfigConnector watchFaceConfigConnector;
+
+    @Mock
+    private NodeMonitor nodeMonitor;
 
     @Before
     public void setUp() {

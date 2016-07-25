@@ -35,9 +35,22 @@ public class ConfigModel extends Model {
     /**
      * Get the TextConfigModel, return null if not present.
      */
-    public @Nullable TextConfigModel maybeGetTextConfigModel() {
+    @Nullable
+    public TextConfigModel maybeGetTextConfigModel() {
         if (containsKey(TextConfigModel.KEY_TEXT_CONFIG_MODEL)) {
             return new TextConfigModel(mDataMap.getDataMap(TextConfigModel.KEY_TEXT_CONFIG_MODEL));
+        }
+        return null;
+    }
+
+    public void setWeatherModel(WeatherModel weatherModel) {
+        mDataMap.putDataMap(WeatherModel.KEY_WEATHER_MODEL, weatherModel.getDataMap());
+    }
+
+    @Nullable
+    public WeatherModel maybeGetWeatherModel() {
+        if (containsKey(WeatherModel.KEY_WEATHER_MODEL)) {
+            return new WeatherModel(mDataMap.getDataMap(WeatherModel.KEY_WEATHER_MODEL));
         }
         return null;
     }

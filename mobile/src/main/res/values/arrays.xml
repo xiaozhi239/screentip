@@ -24,4 +24,9 @@
     <item name="46dp">46dp</item>
     <item name="60dp">60dp</item>
   </string-array>
+
+  <string-array name="weather_scales">
+    <item name="Celsius">Celsius</item>
+    <item name="Fahrenheit">Fahrenheit</item>
+  </string-array>
 </resources>

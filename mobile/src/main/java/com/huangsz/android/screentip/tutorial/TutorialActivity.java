@@ -19,6 +19,9 @@ import com.huangsz.android.screentip.data.PreferenceHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * When first time uses this app.
+ */
 public class TutorialActivity extends Activity {
 
     private ViewPager mViewPager;

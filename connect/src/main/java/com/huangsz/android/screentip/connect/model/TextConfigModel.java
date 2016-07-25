@@ -10,6 +10,7 @@ public class TextConfigModel extends Model {
     /**
      * Key for this model.
      */
+    // TODO(huangsz): Move all of these into an abstract method getKey() in Model.
     public static final String KEY_TEXT_CONFIG_MODEL = "KEY_TEXT_CONFIG_MODEL";
 
     public static final String KEY_TEXT_CONTENT = "KEY_TEXT_CONTENT";

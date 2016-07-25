@@ -23,16 +23,21 @@ import com.huangsz.android.screentip.R;
 import com.huangsz.android.screentip.common.utils.HintUtils;
 import com.huangsz.android.screentip.common.utils.ImageUtils;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
+import com.huangsz.android.screentip.connect.model.WeatherModel;
 import com.huangsz.android.screentip.feature.FLAGS;
 import com.huangsz.android.screentip.nodes.NodeMonitor;
 import com.huangsz.android.screentip.widget.ColorChooserDialog;
 import com.huangsz.android.screentip.widget.ShareWatchFaceDialog;
 import com.huangsz.android.screentip.widget.TextConfigDialog;
+import com.huangsz.android.screentip.widget.WeatherConfigDialog;
 
 import java.lang.ref.WeakReference;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * Activity for configuration of the customization on the watch face.
+ */
 public class WatchFaceConfigActivity extends ActionBarActivity {
 
     private static final int CODE_SELECT_BACKGROUND_PICTURE = 0;
@@ -64,6 +69,8 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
 
     @VisibleForTesting
     protected TextConfigDialog mTextConfigDialog;
+
+    protected WeatherConfigDialog mWeatherConfigDialog;
 
     private ProgressDialog mProgressDialog;
 
@@ -124,7 +131,8 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                              if (mTextConfigDialog == null) {
                                  mTextConfigDialog = TextConfigDialog.newInstance(
                                          getString(R.string.watchface_text),
-                                         mConfigHandler, ConfigHandler.MESSAGE_TEXT);
+                                         mConfigHandler,
+                                         ConfigHandler.MESSAGE_TEXT);
                              }
                             mTextConfigDialog.show(getFragmentManager(), "");
                         }
@@ -132,6 +140,28 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
             );
         } else {
             characterTextLayout.setVisibility(View.GONE);
+        }
+
+        // weather dialog
+        RelativeLayout weatherLayout =
+                (RelativeLayout) findViewById(R.id.configuration_weather_layout);
+        if (FLAGS.SCREEN_WEATHER) {
+            weatherLayout.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (mWeatherConfigDialog == null) {
+                                mWeatherConfigDialog = WeatherConfigDialog.newInstance(
+                                        getString(R.string.watchface_weather),
+                                        mConfigHandler,
+                                        ConfigHandler.MESSAGE_WEATHER);
+                            }
+                            mWeatherConfigDialog.show(getFragmentManager(), "");
+                        }
+                    }
+            );
+        } else {
+            weatherLayout.setVisibility(View.GONE);
         }
 
         mBackgroundImageView.setOnClickListener(new View.OnClickListener() {
@@ -267,6 +297,8 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
 
         public static final int MESSAGE_SNAPSHOT_TIMEOUT = 6;
 
+        public static final int MESSAGE_WEATHER = 7;
+
         private final WeakReference<WatchFaceConfigActivity> activityReference;
 
         private ConfigHandler(WatchFaceConfigActivity activity) {
@@ -310,6 +342,13 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                     break;
                 case MESSAGE_SNAPSHOT_TIMEOUT:
                     activity.failWatchFaceSnapshot();
+                    break;
+                case MESSAGE_WEATHER:
+                    if (FLAGS.SCREEN_WEATHER) {
+                        WeatherModel weatherModel = (WeatherModel) msg.obj;
+                        // set preview
+                        activity.mWatchFaceConfigConnector.setWeatherModel(weatherModel);
+                    }
                     break;
                 default:
                     super.handleMessage(msg);

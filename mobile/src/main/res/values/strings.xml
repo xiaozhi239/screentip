@@ -34,7 +34,7 @@
 
   <!-- WeatherConfigDialog in config activity -->
   <string name="label_show_weather">Show Weather</string>
-  <string name="label_weather_scale">Scale</string>
+  <string name="label_weather_unit">Unit</string>
 
   <!-- Dialog titles of config activity. -->
   <string name="watchface_ticks_color">Watch face ticks color</string>

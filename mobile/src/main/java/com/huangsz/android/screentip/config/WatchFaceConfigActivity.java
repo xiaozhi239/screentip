@@ -24,6 +24,7 @@ import com.huangsz.android.screentip.common.utils.HintUtils;
 import com.huangsz.android.screentip.common.utils.ImageUtils;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
 import com.huangsz.android.screentip.connect.model.WeatherModel;
+import com.huangsz.android.screentip.data.location.LocationTracker;
 import com.huangsz.android.screentip.feature.FLAGS;
 import com.huangsz.android.screentip.nodes.NodeMonitor;
 import com.huangsz.android.screentip.widget.ColorChooserDialog;
@@ -49,6 +50,8 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
     private View mConfigHandColorPreview;
 
     private TextView mConfigTextPreview;
+
+    private TextView mConfigWeatherTextPreview;
 
     private Button mUpdateConfigButton;
 
@@ -82,6 +85,8 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
         mConfigHandColorPreview = findViewById(R.id.configuration_hands_colour_preview);
         mConfigTextPreview =
                 (TextView) findViewById(R.id.configuration_character_text_preview);
+        mConfigWeatherTextPreview =
+                (TextView) findViewById(R.id.configuration_weather_preview);
         mUpdateConfigButton = (Button) findViewById(R.id.configuration_update_button);
         mBackgroundImageView = (ImageView) findViewById(R.id.configuration_background);
         mNodeMonitor = NodeMonitor.getInstance();
@@ -192,10 +197,12 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
     protected void onStart() {
         super.onStart();
         mWatchFaceConfigConnector.maybeConnect();
+        LocationTracker.getInstance(this).start();
     }
 
     @Override
     protected void onStop() {
+        LocationTracker.getInstance(this).stop();
         mWatchFaceConfigConnector.maybeDisconnect();
         super.onStop();
     }
@@ -346,7 +353,11 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                 case MESSAGE_WEATHER:
                     if (FLAGS.SCREEN_WEATHER) {
                         WeatherModel weatherModel = (WeatherModel) msg.obj;
-                        // set preview
+                        TextConfigModel textModel = weatherModel.getTextConfigModel();
+                        activity.mConfigWeatherTextPreview.setTextColor(
+                                Color.parseColor(textModel.getColor()));
+                        activity.mConfigWeatherTextPreview.setText(
+                                textModel.getDataMap().getString(TextConfigModel.KEY_TEXT_CONTENT));
                         activity.mWatchFaceConfigConnector.setWeatherModel(weatherModel);
                     }
                     break;

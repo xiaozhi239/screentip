@@ -12,14 +12,33 @@ public class WeatherModel extends Model {
      */
     public static final String KEY_WEATHER_MODEL = "KEY_WEATHER_MODEL";
 
-    public static final String KEY_CURRENT_TEMPERATURE = "KEY_CURRENT_TEMPERATURE";
+    private static final String KEY_SHOW_WEATHER = "KEY_SHOULD_SHOW_WEATHER";
 
-    public static final String KEY_TEMPERATURE_SCALE = "KEY_TEMPERATURE_SCALE";
+    private static final String KEY_CURRENT_TEMPERATURE = "KEY_CURRENT_TEMPERATURE";
 
-    public static final String KEY_TEXT_CONFIG_MODEL = "KEY_TEXT_CONFIG_MODEL";
+    private static final String KEY_TEMPERATURE_UNIT = "KEY_TEMPERATURE_UNIT";
 
-    public enum Scale {
-        Celsius, Fahrenheit
+    private static final String KEY_TEXT_CONFIG_MODEL = "KEY_TEXT_CONFIG_MODEL";
+
+    public enum Unit {
+        Celsius("metric", "°C"), Fahrenheit("imperial", "°F");
+
+        private String value;
+
+        private String symbol;
+
+        Unit(String value, String symbol) {
+            this.value = value;
+            this.symbol = symbol;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public String getSymbol() {
+            return symbol;
+        }
     }
 
     public WeatherModel() {
@@ -30,20 +49,28 @@ public class WeatherModel extends Model {
         super(dataMap);
     }
 
-    public void setCurrentTemperature(float degree) {
-        mDataMap.putFloat(KEY_CURRENT_TEMPERATURE, degree);
+    public void setShowWeather(boolean showWeather) {
+        mDataMap.putBoolean(KEY_SHOW_WEATHER, showWeather);
     }
 
-    public float getCurrentTemperature() {
-        return mDataMap.getFloat(KEY_CURRENT_TEMPERATURE);
+    public boolean isShowWeather() {
+        return mDataMap.getBoolean(KEY_SHOW_WEATHER, false);
     }
 
-    public void setTemperatureScale(Scale scale) {
-        mDataMap.putInt(KEY_TEMPERATURE_SCALE, scale.ordinal());
+    public void setCurrentTemperature(double degree) {
+        mDataMap.putDouble(KEY_CURRENT_TEMPERATURE, degree);
     }
 
-    public Scale getTemperatureScale() {
-        return Scale.values()[mDataMap.getInt(KEY_TEMPERATURE_SCALE)];
+    public double getCurrentTemperature() {
+        return mDataMap.getDouble(KEY_CURRENT_TEMPERATURE);
+    }
+
+    public void setTemperatureUnit(Unit unit) {
+        mDataMap.putInt(KEY_TEMPERATURE_UNIT, unit.ordinal());
+    }
+
+    public Unit getTemperatureUnit() {
+        return Unit.values()[mDataMap.getInt(KEY_TEMPERATURE_UNIT)];
     }
 
     /** Set the configuration of weather related texts. */

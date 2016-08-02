@@ -9,7 +9,10 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 
 import com.huangsz.android.screentip.R;
+import com.huangsz.android.screentip.common.utils.ViewUtils;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
+
+import java.util.Comparator;
 
 /**
  * Config text on watch face. Such as user customized text, date or weather.
@@ -38,7 +41,7 @@ public class TextConfigDialog extends BaseConfigDialog {
     public void customizeView(AlertDialog.Builder builder) {
         View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_text_config, null);
         builder.setView(view);
-        setElements(view);
+        onInitialize(view);
         builder.setPositiveButton(R.string.button_confirm, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -48,29 +51,35 @@ public class TextConfigDialog extends BaseConfigDialog {
         builder.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // Do nothing, just close. TODO(huangsz) preserve current state.
+                // Do nothing, just close.
             }
         });
     }
 
-    private void restoreStatus() {
+    private void maybeRestoreStatus() {
         if (mTextModel.isEmpty()) {
             return;
         }
         mContent.setText(mTextModel.getContent());
         mCoordinateX.setProgress((int)mTextModel.getCoordinateX());
         mCoordinateY.setProgress((int)mTextModel.getCoordinateY());
-        restoreColorSpinner(mTextModel.getColor());
-        restoreFontSpinner(mTextModel.getTextSize());
+        ViewUtils.setSpinnerSelection(mColorSpinner, mTextModel.getColor());
+        ViewUtils.setSpinnerSelection(mFontSpinner, mTextModel.getTextSize(),
+                new Comparator<Object>() {
+                    @Override
+                    public int compare(Object o, Object t1) {
+                        return getFontDpFromSpinnerSelection((String) o) - (int) t1;
+                    }
+                });
     }
 
-    private void setElements(View view) {
+    private void onInitialize(View view) {
         mContent = (EditText) view.findViewById(R.id.dialog_text_content);
         mCoordinateX = (SeekBar) view.findViewById(R.id.dialog_text_coordinate_x);
         mCoordinateY = (SeekBar) view.findViewById(R.id.dialog_text_coordinate_y);
         mColorSpinner = (Spinner) view.findViewById(R.id.dialog_text_color_spinner);
         mFontSpinner = (Spinner) view.findViewById(R.id.dialog_text_font_spinner);
-        restoreStatus();
+        maybeRestoreStatus();
     }
 
     private void confirmConfig() {
@@ -86,24 +95,5 @@ public class TextConfigDialog extends BaseConfigDialog {
     private int getFontDpFromSpinnerSelection(String spinnerSelection) {
         String fontInDp = spinnerSelection.trim();  // Example: '12dp'
         return Integer.parseInt(fontInDp.substring(0, fontInDp.length() - 2));
-    }
-
-    private void restoreColorSpinner(String color) {
-        for (int i = 0; i < mColorSpinner.getCount(); i++) {
-            if (mColorSpinner.getItemAtPosition(i).equals(color)) {
-                mColorSpinner.setSelection(i);
-                break;
-            }
-        }
-    }
-
-    private void restoreFontSpinner(int font) {
-        for (int i = 0; i < mFontSpinner.getCount(); i++) {
-            if (getFontDpFromSpinnerSelection(
-                    mFontSpinner.getItemAtPosition(i).toString()) == font) {
-                mFontSpinner.setSelection(i);
-                break;
-            }
-        }
     }
 }

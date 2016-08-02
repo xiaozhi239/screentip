@@ -3,7 +3,8 @@ package com.huangsz.android.screentip.connect.model;
 import com.google.android.gms.wearable.DataMap;
 
 /**
- * Base model class.
+ * Base model class, which contains information for rendering watch face, it is used for
+ * the communication between the mobile and the wear.
  */
 public abstract class Model {
 

@@ -23,6 +23,7 @@ import com.huangsz.android.screentip.connect.ConnectManager;
 import com.huangsz.android.screentip.connect.model.ConfigModel;
 import com.huangsz.android.screentip.connect.model.SnapshotResponseModel;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
+import com.huangsz.android.screentip.connect.model.WeatherModel;
 import com.huangsz.android.screentip.connect.tasks.LoadBitmapAsyncTask;
 import com.huangsz.android.screentip.feature.FLAGS;
 
@@ -113,9 +114,17 @@ class CharacterWatchFaceConnector implements
             String color = configModel.getDataMap().getString(ConfigModel.KEY_HAND_COLOR);
             mWatchFaceRenderer.setHandColor(Color.parseColor(color));
         }
-        if (configModel.containsKey(TextConfigModel.KEY_TEXT_CONFIG_MODEL) && FLAGS.SCREEN_TEXT) {
-            TextConfigModel textModel = configModel.maybeGetTextConfigModel();
-            mWatchFaceRenderer.setText(textModel);
+        if (FLAGS.SCREEN_TEXT) {
+            TextConfigModel textModel = configModel.maybeTextConfigModel();
+            if (textModel != null) {
+                mWatchFaceRenderer.setText(textModel);
+            }
+        }
+        if (FLAGS.WEATHER) {
+            WeatherModel weatherModel = configModel.maybeGetWeatherModel();
+            if (weatherModel != null) {
+                mWatchFaceRenderer.setWeatherModel(weatherModel);
+            }
         }
         if (configModel.containsKey(ConfigModel.KEY_BACKGROUND_IMG)) {
             Asset asset = configModel.getDataMap().getAsset(ConfigModel.KEY_BACKGROUND_IMG);

@@ -36,7 +36,7 @@ public class ConfigModel extends Model {
      * Get the TextConfigModel, return null if not present.
      */
     @Nullable
-    public TextConfigModel maybeGetTextConfigModel() {
+    public TextConfigModel maybeTextConfigModel() {
         if (containsKey(TextConfigModel.KEY_TEXT_CONFIG_MODEL)) {
             return new TextConfigModel(mDataMap.getDataMap(TextConfigModel.KEY_TEXT_CONFIG_MODEL));
         }

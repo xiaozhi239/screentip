@@ -14,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import com.huangsz.android.screentip.R;
 import com.huangsz.android.screentip.common.utils.UnitTransferUtils;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
+import com.huangsz.android.screentip.connect.model.WeatherModel;
 import com.huangsz.android.screentip.feature.FLAGS;
 
 import java.util.Calendar;
@@ -57,8 +58,10 @@ class CharacterWatchFaceRenderer {
     private Paint mMinutePaint;
     private Paint mSecondPaint;
     private Paint mTextPaint;  // Paint to show a customized text on watch face.
+    private Paint mWeatherPaint; // Paint to show the weather information on watch face.
 
     private TextConfigModel mTextModel;
+    private WeatherModel mWeatherModel;
 
     CharacterWatchFaceRenderer(Context context, UpdateWatchFaceCallback updateWatchFaceCallback) {
         mContext = context;
@@ -81,7 +84,8 @@ class CharacterWatchFaceRenderer {
         mSecondPaint = createLinePaint(
                 resources.getColor(R.color.second_bar_color), 2.f, Paint.Cap.BUTT);
 
-        mTextPaint = createTextPaint(resources, false);
+        mTextPaint = createTextPaint(resources, false /* not bold */);
+        mWeatherPaint = createTextPaint(resources, false /* not bold */);
 
         // allocate a Calendar to calculate local time using the UTC time and time zone
         mCalendar = Calendar.getInstance();
@@ -106,6 +110,14 @@ class CharacterWatchFaceRenderer {
         mTextModel = textModel;
         mTextPaint.setColor(Color.parseColor(textModel.getColor()));
         mTextPaint.setTextSize(UnitTransferUtils.getPixelFromDp(textModel.getTextSize(), mContext));
+    }
+
+    public void setWeatherModel(WeatherModel weatherModel) {
+        mWeatherModel = weatherModel;
+        TextConfigModel textModel = mWeatherModel.getTextConfigModel();
+        mWeatherPaint.setColor(Color.parseColor(textModel.getColor()));
+        mWeatherPaint.setTextSize(
+                UnitTransferUtils.getPixelFromDp(textModel.getTextSize(), mContext));
     }
 
     public void setBackgroundImage(Bitmap image) {
@@ -207,12 +219,21 @@ class CharacterWatchFaceRenderer {
                 mHourPaint);
 
         if (FLAGS.SCREEN_TEXT && mTextModel != null) {
-            // Draw the character.
-            float charX = width * (mTextModel.getCoordinateX() / 100f);
-            float charY = height * (mTextModel.getCoordinateY() / 100f);
-            canvas.drawText(mTextModel.getContent(),
-                    charX, charY, mTextPaint);
+            // Draw the customized text.
+            drawText(mTextModel, mTextPaint, canvas, width, height);
         }
+
+        if (FLAGS.WEATHER && mWeatherModel != null && mWeatherModel.isShowWeather()) {
+            drawText(mWeatherModel.getTextConfigModel(), mWeatherPaint, canvas, width, height);
+        }
+    }
+
+    private void drawText(TextConfigModel textModel, Paint textPaint,
+                          Canvas canvas, int width, int height) {
+        float charX = width * (textModel.getCoordinateX() / 100f);
+        float charY = height * (textModel.getCoordinateY() / 100f);
+        canvas.drawText(textModel.getContent(),
+                charX, charY, textPaint);
     }
 
     private void drawTicks(Canvas canvas, float centerX, float centerY,

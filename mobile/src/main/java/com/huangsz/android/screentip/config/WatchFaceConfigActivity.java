@@ -151,20 +151,25 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
         RelativeLayout weatherLayout =
                 (RelativeLayout) findViewById(R.id.configuration_weather_layout);
         if (FLAGS.SCREEN_WEATHER) {
-            weatherLayout.setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            if (mWeatherConfigDialog == null) {
-                                mWeatherConfigDialog = WeatherConfigDialog.newInstance(
-                                        getString(R.string.watchface_weather),
-                                        mConfigHandler,
-                                        ConfigHandler.MESSAGE_WEATHER);
+            // TODO: Remove this when we enable input the city name.
+            if (!LocationTracker.getInstance(this).isActive()) {
+                weatherLayout.setEnabled(false);
+            } else {
+                weatherLayout.setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (mWeatherConfigDialog == null) {
+                                    mWeatherConfigDialog = WeatherConfigDialog.newInstance(
+                                            getString(R.string.watchface_weather),
+                                            mConfigHandler,
+                                            ConfigHandler.MESSAGE_WEATHER);
+                                }
+                                mWeatherConfigDialog.show(getFragmentManager(), "");
                             }
-                            mWeatherConfigDialog.show(getFragmentManager(), "");
                         }
-                    }
-            );
+                );
+            }
         } else {
             weatherLayout.setVisibility(View.GONE);
         }
@@ -197,12 +202,16 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
     protected void onStart() {
         super.onStart();
         mWatchFaceConfigConnector.maybeConnect();
-        LocationTracker.getInstance(this).start();
+        if (LocationTracker.getInstance(this).isActive()) {
+            LocationTracker.getInstance(this).start();
+        }
     }
 
     @Override
     protected void onStop() {
-        LocationTracker.getInstance(this).stop();
+        if (LocationTracker.getInstance(this).isActive()) {
+            LocationTracker.getInstance(this).stop();
+        }
         mWatchFaceConfigConnector.maybeDisconnect();
         super.onStop();
     }

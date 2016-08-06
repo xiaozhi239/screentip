@@ -60,11 +60,11 @@ public class TextConfigDialog extends BaseConfigDialog {
         if (mTextModel.isEmpty()) {
             return;
         }
-        mContent.setText(mTextModel.getContent());
-        mCoordinateX.setProgress((int)mTextModel.getCoordinateX());
-        mCoordinateY.setProgress((int)mTextModel.getCoordinateY());
-        ViewUtils.setSpinnerSelection(mColorSpinner, mTextModel.getColor());
-        ViewUtils.setSpinnerSelection(mFontSpinner, mTextModel.getTextSize(),
+        mContent.setText(mTextModel.maybeGetContent());
+        mCoordinateX.setProgress((int)mTextModel.maybeGetCoordinateX());
+        mCoordinateY.setProgress((int)mTextModel.maybeGetCoordinateY());
+        ViewUtils.setSpinnerSelection(mColorSpinner, mTextModel.maybeGetColor());
+        ViewUtils.setSpinnerSelection(mFontSpinner, mTextModel.maybeGetTextSize(),
                 new Comparator<Object>() {
                     @Override
                     public int compare(Object o, Object t1) {

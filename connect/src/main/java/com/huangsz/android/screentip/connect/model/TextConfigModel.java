@@ -1,5 +1,7 @@
 package com.huangsz.android.screentip.connect.model;
 
+import android.support.annotation.Nullable;
+
 import com.google.android.gms.wearable.DataMap;
 
 /**
@@ -7,15 +9,15 @@ import com.google.android.gms.wearable.DataMap;
  */
 public class TextConfigModel extends Model {
 
-    public static final String KEY_TEXT_CONTENT = "KEY_TEXT_CONTENT";
+    private static final String KEY_TEXT_CONTENT = "KEY_TEXT_CONTENT";
 
-    public static final String KEY_TEXT_COLOR = "KEY_TEXT_COLOR";
+    private static final String KEY_TEXT_COLOR = "KEY_TEXT_COLOR";
 
-    public static final String KEY_TEXT_SIZE = "KEY_TEXT_SIZE";
+    private static final String KEY_TEXT_SIZE = "KEY_TEXT_SIZE";
 
-    public static final String KEY_COORDINATE_X = "KEY_COORDINATE_X";
+    private static final String KEY_COORDINATE_X = "KEY_COORDINATE_X";
 
-    public static final String KEY_COORDINATE_Y = "KEY_COORDINATE_Y";
+    private static final String KEY_COORDINATE_Y = "KEY_COORDINATE_Y";
 
     public TextConfigModel() {
         super();
@@ -25,26 +27,31 @@ public class TextConfigModel extends Model {
         super(dataMap);
     }
 
-    public String getContent() {
+    @Nullable
+    public String maybeGetContent() {
         return mDataMap.getString(KEY_TEXT_CONTENT);
     }
 
-    public float getCoordinateX() {
+    @Nullable
+    public float maybeGetCoordinateX() {
         return mDataMap.getFloat(KEY_COORDINATE_X);
     }
 
-    public float getCoordinateY() {
+    @Nullable
+    public float maybeGetCoordinateY() {
         return mDataMap.getFloat(KEY_COORDINATE_Y);
     }
 
     /**
      * Get text size, the unit is dp. So it needs to be transferred to pixels when used.
      */
-    public int getTextSize() {
+    @Nullable
+    public int maybeGetTextSize() {
         return mDataMap.getInt(KEY_TEXT_SIZE);
     }
 
-    public String getColor() {
+    @Nullable
+    public String maybeGetColor() {
         return mDataMap.getString(KEY_TEXT_COLOR);
     }
 

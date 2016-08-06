@@ -163,10 +163,10 @@ public class WeatherConfigDialog extends BaseConfigDialog {
         ViewUtils.setSpinnerSelection(mUnitSpinner, mWeatherModel.getTemperatureUnit());
 
         TextConfigModel textModel = mWeatherModel.getTextConfigModel();
-        mCoordinateX.setProgress((int)textModel.getCoordinateX());
-        mCoordinateY.setProgress((int)textModel.getCoordinateY());
-        ViewUtils.setSpinnerSelection(mColorSpinner, textModel.getColor());
-        ViewUtils.setSpinnerSelection(mFontSpinner, textModel.getTextSize(),
+        mCoordinateX.setProgress((int)textModel.maybeGetCoordinateX());
+        mCoordinateY.setProgress((int)textModel.maybeGetCoordinateY());
+        ViewUtils.setSpinnerSelection(mColorSpinner, textModel.maybeGetColor());
+        ViewUtils.setSpinnerSelection(mFontSpinner, textModel.maybeGetTextSize(),
                 new Comparator<Object>() {
                     @Override
                     public int compare(Object o, Object t1) {

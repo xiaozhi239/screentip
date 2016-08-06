@@ -108,16 +108,16 @@ class CharacterWatchFaceRenderer {
 
     public void setText(TextConfigModel textModel) {
         mTextModel = textModel;
-        mTextPaint.setColor(Color.parseColor(textModel.getColor()));
-        mTextPaint.setTextSize(UnitTransferUtils.getPixelFromDp(textModel.getTextSize(), mContext));
+        mTextPaint.setColor(Color.parseColor(textModel.maybeGetColor()));
+        mTextPaint.setTextSize(UnitTransferUtils.getPixelFromDp(textModel.maybeGetTextSize(), mContext));
     }
 
     public void setWeatherModel(WeatherModel weatherModel) {
         mWeatherModel = weatherModel;
         TextConfigModel textModel = mWeatherModel.getTextConfigModel();
-        mWeatherPaint.setColor(Color.parseColor(textModel.getColor()));
+        mWeatherPaint.setColor(Color.parseColor(textModel.maybeGetColor()));
         mWeatherPaint.setTextSize(
-                UnitTransferUtils.getPixelFromDp(textModel.getTextSize(), mContext));
+                UnitTransferUtils.getPixelFromDp(textModel.maybeGetTextSize(), mContext));
     }
 
     public void setBackgroundImage(Bitmap image) {
@@ -230,9 +230,9 @@ class CharacterWatchFaceRenderer {
 
     private void drawText(TextConfigModel textModel, Paint textPaint,
                           Canvas canvas, int width, int height) {
-        float charX = width * (textModel.getCoordinateX() / 100f);
-        float charY = height * (textModel.getCoordinateY() / 100f);
-        canvas.drawText(textModel.getContent(),
+        float charX = width * (textModel.maybeGetCoordinateX() / 100f);
+        float charY = height * (textModel.maybeGetCoordinateY() / 100f);
+        canvas.drawText(textModel.maybeGetContent(),
                 charX, charY, textPaint);
     }
 

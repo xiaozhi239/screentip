@@ -342,9 +342,9 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                     if (FLAGS.SCREEN_TEXT) {
                         TextConfigModel textModel = (TextConfigModel) msg.obj;
                         activity.mConfigTextPreview.setTextColor(
-                                Color.parseColor(textModel.getColor()));
+                                Color.parseColor(textModel.maybeGetColor()));
                         activity.mConfigTextPreview.setText(
-                                textModel.getDataMap().getString(TextConfigModel.KEY_TEXT_CONTENT));
+                                textModel.maybeGetContent());
                         activity.mWatchFaceConfigConnector.setTextConfigModel(textModel);
                     }
                     break;
@@ -364,9 +364,9 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                         WeatherModel weatherModel = (WeatherModel) msg.obj;
                         TextConfigModel textModel = weatherModel.getTextConfigModel();
                         activity.mConfigWeatherTextPreview.setTextColor(
-                                Color.parseColor(textModel.getColor()));
+                                Color.parseColor(textModel.maybeGetColor()));
                         activity.mConfigWeatherTextPreview.setText(
-                                textModel.getDataMap().getString(TextConfigModel.KEY_TEXT_CONTENT));
+                                textModel.maybeGetContent());
                         activity.mWatchFaceConfigConnector.setWeatherModel(weatherModel);
                     }
                     break;

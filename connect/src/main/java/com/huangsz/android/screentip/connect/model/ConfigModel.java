@@ -10,11 +10,6 @@ import com.google.android.gms.wearable.DataMap;
  */
 public class ConfigModel extends Model {
 
-    /**
-     * Key for this model.
-     */
-    public static final String KEY_CONFIG_MODEL = "KEY_CONFIG_MODEL";
-
     public static final String KEY_TICK_COLOR = "KEY_TICK_COLOR";
 
     public static final String KEY_HAND_COLOR = "KEY_HAND_COLOR";

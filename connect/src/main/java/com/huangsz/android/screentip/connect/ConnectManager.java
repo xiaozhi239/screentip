@@ -19,6 +19,8 @@ public class ConnectManager {
 
     public static final String DATA_LAYER_WATCH_FACE_CONFIG_PATH = "/watch_face_config";
 
+    /** Key for the DataMap which contains the watch face configuration information.  */
+    private static final String KEY_CONFIG_MODEL = "KEY_CONFIG_MODEL";
 
     private static ConnectManager sInstance = null;
 
@@ -36,7 +38,7 @@ public class ConnectManager {
         new ConnectClient(googleApiClient) {
             @Override
             void putData(DataMap dataMap) {
-                dataMap.putDataMap(ConfigModel.KEY_CONFIG_MODEL, configModel.getDataMap());
+                dataMap.putDataMap(KEY_CONFIG_MODEL, configModel.getDataMap());
             }
         }.send();
     }
@@ -68,8 +70,8 @@ public class ConnectManager {
     @Nullable
     public ConfigModel maybeGetConfigModelFromDataItem(DataItem item) {
         DataMap dataMap = getDataMapFromItem(item);
-        if (dataMap != null && dataMap.containsKey(ConfigModel.KEY_CONFIG_MODEL)) {
-            return new ConfigModel(dataMap.getDataMap(ConfigModel.KEY_CONFIG_MODEL));
+        if (dataMap != null && dataMap.containsKey(KEY_CONFIG_MODEL)) {
+            return new ConfigModel(dataMap.getDataMap(KEY_CONFIG_MODEL));
         }
         return null;
     }

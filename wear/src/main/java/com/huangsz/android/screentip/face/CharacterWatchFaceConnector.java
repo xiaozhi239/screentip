@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -100,8 +101,9 @@ class CharacterWatchFaceConnector implements
     };
 
     private void processDataItem(DataItem item) {
-        if (mConnectManager.containsKey(item, ConfigModel.KEY_CONFIG_MODEL)) {
-            processConfigModel(mConnectManager.maybeGetConfigModel(item));
+        ConfigModel configModel = mConnectManager.maybeGetConfigModelFromDataItem(item);
+        if (configModel != null) {
+            processConfigModel(configModel);
         }
     }
 
@@ -115,7 +117,7 @@ class CharacterWatchFaceConnector implements
             mWatchFaceRenderer.setHandColor(Color.parseColor(color));
         }
         if (FLAGS.SCREEN_TEXT) {
-            TextConfigModel textModel = configModel.maybeTextConfigModel();
+            TextConfigModel textModel = configModel.maybeGetTextConfigModel();
             if (textModel != null) {
                 mWatchFaceRenderer.setText(textModel);
             }

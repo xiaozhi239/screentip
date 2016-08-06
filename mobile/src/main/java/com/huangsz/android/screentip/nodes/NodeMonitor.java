@@ -15,7 +15,7 @@ import java.util.List;
  * google play services 7.0. But AVD doesn't support 7.0 yet, so we can't use it for emulator.
  * So currently there are at most 1 watch paired at a time.
  *
- * <p>TODO(huangsz) Change to using CapabilityApi when 7.0 is supported for emulator.
+ * <p>TODO(huangsz): Change to using CapabilityApi when 7.0 is supported for emulator.
  */
 public class NodeMonitor {
 

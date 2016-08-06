@@ -32,7 +32,11 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
 
     private static final String TAG = "WFConfigConnector";
 
-    private ConfigModel mConfigModel;
+    /** For sending only the updated part to the watch */
+    private ConfigModel mNewChangeConfigModel;
+
+    /** ConfigModel representing the current updated watch face state. */
+    private ConfigModel mUpdatedConfigModel;
 
     private Bitmap mBackgroundImage;
 
@@ -78,10 +82,10 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
     public void sendConfigChangeToWatch() {
         if (mBackgroundImage != null) {
             Asset asset = ImageUtils.compressAndCreateAssetFromBitmap(mBackgroundImage);
-            getConfigModel().getDataMap().putAsset(ConfigModel.KEY_BACKGROUND_IMG, asset);
+            getNewChangeConfigModel().getDataMap().putAsset(ConfigModel.KEY_BACKGROUND_IMG, asset);
         }
-        if (!getConfigModel().isEmpty()) {
-            ConnectManager.getInstance().sendConfigModel(mGoogleApiClient, getConfigModel());
+        if (!getNewChangeConfigModel().isEmpty()) {
+            ConnectManager.getInstance().sendConfigModel(mGoogleApiClient, getNewChangeConfigModel());
             resetConfig();
         }
     }
@@ -119,15 +123,15 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
     }
 
     public void setTextConfigModel(TextConfigModel textConfigModel) {
-        getConfigModel().setTextConfigModel(textConfigModel);
+        getNewChangeConfigModel().setTextConfigModel(textConfigModel);
     }
 
     public void setTickColor(String tickColor) {
-        getConfigModel().getDataMap().putString(ConfigModel.KEY_TICK_COLOR, tickColor);
+        getNewChangeConfigModel().getDataMap().putString(ConfigModel.KEY_TICK_COLOR, tickColor);
     }
 
     public void setHandColor(String handColor) {
-        getConfigModel().getDataMap().putString(ConfigModel.KEY_HAND_COLOR, handColor);
+        getNewChangeConfigModel().getDataMap().putString(ConfigModel.KEY_HAND_COLOR, handColor);
     }
 
     public void setBackgroundImage(Bitmap backgroundImage) {
@@ -137,7 +141,7 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
     }
 
     public void setWeatherModel(WeatherModel weatherModel) {
-        getConfigModel().setWeatherModel(weatherModel);
+        getNewChangeConfigModel().setWeatherModel(weatherModel);
     }
 
     public boolean isConnectedToWear() {
@@ -145,15 +149,20 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
                 && mNodeMonitor.hasAvailableNode();
     }
 
-    public ConfigModel getConfigModel() {
-        if (mConfigModel == null) {
-            mConfigModel = new ConfigModel();
+    public ConfigModel getNewChangeConfigModel() {
+        if (mNewChangeConfigModel == null) {
+            mNewChangeConfigModel = new ConfigModel();
         }
-        return mConfigModel;
+        return mNewChangeConfigModel;
     }
 
     private void resetConfig() {
-        mConfigModel = null;
+        if (mUpdatedConfigModel == null) {
+            mUpdatedConfigModel = getNewChangeConfigModel();
+        } else {
+            mUpdatedConfigModel.onModelUpdate(mNewChangeConfigModel);
+        }
+        mNewChangeConfigModel = null;
     }
 
     private final DataApi.DataListener mOnDataListener = new DataApi.DataListener() {

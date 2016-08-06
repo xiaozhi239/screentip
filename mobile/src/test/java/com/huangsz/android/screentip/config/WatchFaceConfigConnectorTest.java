@@ -45,21 +45,21 @@ public class WatchFaceConfigConnectorTest {
     public void setTickColor() {
         connector.setTickColor("white");
         assertEquals("white",
-                connector.getConfigModel().getDataMap().getString(ConfigModel.KEY_TICK_COLOR));
+                connector.getNewChangeConfigModel().getDataMap().getString(ConfigModel.KEY_TICK_COLOR));
     }
 
     @Test
     public void setHandColor() {
         connector.setHandColor("red");
         assertEquals("red",
-                connector.getConfigModel().getDataMap().getString(ConfigModel.KEY_HAND_COLOR));
+                connector.getNewChangeConfigModel().getDataMap().getString(ConfigModel.KEY_HAND_COLOR));
     }
 
     @Test
     public void setTextConfigModel() {
         TextConfigModel model = new TextConfigModel();
         connector.setTextConfigModel(model);
-        assertEquals(model, connector.getConfigModel().maybeGetTextConfigModel());
+        assertEquals(model, connector.getNewChangeConfigModel().maybeGetTextConfigModel());
     }
 
     // GoogleApiClient needs an Android wear to be connected. So we can't test the receive here.
@@ -73,10 +73,10 @@ public class WatchFaceConfigConnectorTest {
         Bitmap background = Bitmap.createBitmap(20, 20, Bitmap.Config.ARGB_8888);
         connector.setBackgroundImage(background);
 
-        assertFalse(connector.getConfigModel().isEmpty());
-        assertEquals(textConfigModel, connector.getConfigModel().maybeGetTextConfigModel());
+        assertFalse(connector.getNewChangeConfigModel().isEmpty());
+        assertEquals(textConfigModel, connector.getNewChangeConfigModel().maybeGetTextConfigModel());
         connector.sendConfigChangeToWatch();
-        assertTrue(connector.getConfigModel().isEmpty());
+        assertTrue(connector.getNewChangeConfigModel().isEmpty());
     }
 
     private TextConfigModel createTextConfigModel() {

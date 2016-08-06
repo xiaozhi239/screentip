@@ -66,7 +66,7 @@ public class ConnectManager {
      * Try to get ConfigModel from DataItem. Return null if not applicable.
      */
     @Nullable
-    public ConfigModel maybeGetConfigModel(DataItem item) {
+    public ConfigModel maybeGetConfigModelFromDataItem(DataItem item) {
         DataMap dataMap = getDataMapFromItem(item);
         if (dataMap != null && dataMap.containsKey(ConfigModel.KEY_CONFIG_MODEL)) {
             return new ConfigModel(dataMap.getDataMap(ConfigModel.KEY_CONFIG_MODEL));

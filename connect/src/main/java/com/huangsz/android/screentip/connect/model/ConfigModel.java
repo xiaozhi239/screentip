@@ -2,6 +2,7 @@ package com.huangsz.android.screentip.connect.model;
 
 import android.support.annotation.Nullable;
 
+import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataMap;
 
 /**
@@ -28,6 +29,33 @@ public class ConfigModel extends Model {
         super(dataMap);
     }
 
+    public void setTickColor(String color) {
+        mDataMap.putString(KEY_TICK_COLOR, color);
+    }
+
+    @Nullable
+    public String maybeGetTickColor() {
+        return mDataMap.getString(KEY_TICK_COLOR);
+    }
+
+    public void setHandColor(String color) {
+        mDataMap.putString(KEY_HAND_COLOR, color);
+    }
+
+    @Nullable
+    public String maybeGetHandColor() {
+        return mDataMap.getString(KEY_HAND_COLOR);
+    }
+
+    public void setBackgroundImage(Asset image) {
+        mDataMap.putAsset(KEY_BACKGROUND_IMG, image);
+    }
+
+    @Nullable
+    public Asset maybeGetBackgroundImage() {
+        return mDataMap.getAsset(KEY_BACKGROUND_IMG);
+    }
+
     public void setTextConfigModel(TextConfigModel textConfigModel) {
         mDataMap.putDataMap(TextConfigModel.KEY_TEXT_CONFIG_MODEL, textConfigModel.getDataMap());
     }
@@ -36,7 +64,7 @@ public class ConfigModel extends Model {
      * Get the TextConfigModel, return null if not present.
      */
     @Nullable
-    public TextConfigModel maybeTextConfigModel() {
+    public TextConfigModel maybeGetTextConfigModel() {
         if (containsKey(TextConfigModel.KEY_TEXT_CONFIG_MODEL)) {
             return new TextConfigModel(mDataMap.getDataMap(TextConfigModel.KEY_TEXT_CONFIG_MODEL));
         }
@@ -53,5 +81,23 @@ public class ConfigModel extends Model {
             return new WeatherModel(mDataMap.getDataMap(WeatherModel.KEY_WEATHER_MODEL));
         }
         return null;
+    }
+
+    public void onModelUpdate(ConfigModel configModel) {
+        if (configModel.maybeGetTickColor() != null)  {
+            setTickColor(configModel.maybeGetTickColor());
+        }
+        if (configModel.maybeGetHandColor() != null) {
+            setHandColor(configModel.maybeGetHandColor());
+        }
+        if (configModel.maybeGetBackgroundImage() != null) {
+            setBackgroundImage(configModel.maybeGetBackgroundImage());
+        }
+        if (configModel.maybeGetTextConfigModel() != null) {
+            setTextConfigModel(configModel.maybeGetTextConfigModel());
+        }
+        if (configModel.maybeGetWeatherModel() != null) {
+            setWeatherModel(configModel.maybeGetWeatherModel());
+        }
     }
 }

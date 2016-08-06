@@ -105,8 +105,7 @@ public class CharacterWatchFaceService extends CanvasWatchFaceService {
                     .setShowSystemUiTime(false)
                     .build());
 
-            mWatchFaceRenderer = new CharacterWatchFaceRenderer(
-                    CharacterWatchFaceService.this,
+            mWatchFaceRenderer = new CharacterWatchFaceRenderer(CharacterWatchFaceService.this,
                     new CharacterWatchFaceRenderer.UpdateWatchFaceCallback() {
                         @Override
                         public void updateWatchFace() {

@@ -36,4 +36,6 @@ public class NodeListenerService extends WearableListenerService {
         super.onPeerDisconnected(peer);
         mNodeMonitor.removeNode(peer);
     }
+
+
 }

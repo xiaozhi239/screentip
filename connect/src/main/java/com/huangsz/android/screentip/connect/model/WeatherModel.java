@@ -7,11 +7,6 @@ import com.google.android.gms.wearable.DataMap;
  */
 public class WeatherModel extends Model {
 
-    /**
-     * Key for this model
-     */
-    public static final String KEY_WEATHER_MODEL = "KEY_WEATHER_MODEL";
-
     private static final String KEY_SHOW_WEATHER = "KEY_SHOULD_SHOW_WEATHER";
 
     private static final String KEY_CURRENT_TEMPERATURE = "KEY_CURRENT_TEMPERATURE";

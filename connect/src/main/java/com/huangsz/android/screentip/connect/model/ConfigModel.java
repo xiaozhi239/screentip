@@ -16,6 +16,10 @@ public class ConfigModel extends Model {
 
     public static final String KEY_BACKGROUND_IMG = "KEY_BACKGROUND_IMG";
 
+    public static final String KEY_TEXT_CONFIG_MODEL = "KEY_TEXT_CONFIG_MODEL";
+
+    public static final String KEY_WEATHER_MODEL = "KEY_WEATHER_MODEL";
+
     public ConfigModel() {
         super();
     }
@@ -52,7 +56,7 @@ public class ConfigModel extends Model {
     }
 
     public void setTextConfigModel(TextConfigModel textConfigModel) {
-        mDataMap.putDataMap(TextConfigModel.KEY_TEXT_CONFIG_MODEL, textConfigModel.getDataMap());
+        mDataMap.putDataMap(KEY_TEXT_CONFIG_MODEL, textConfigModel.getDataMap());
     }
 
     /**
@@ -60,20 +64,20 @@ public class ConfigModel extends Model {
      */
     @Nullable
     public TextConfigModel maybeGetTextConfigModel() {
-        if (containsKey(TextConfigModel.KEY_TEXT_CONFIG_MODEL)) {
-            return new TextConfigModel(mDataMap.getDataMap(TextConfigModel.KEY_TEXT_CONFIG_MODEL));
+        if (containsKey(KEY_TEXT_CONFIG_MODEL)) {
+            return new TextConfigModel(mDataMap.getDataMap(KEY_TEXT_CONFIG_MODEL));
         }
         return null;
     }
 
     public void setWeatherModel(WeatherModel weatherModel) {
-        mDataMap.putDataMap(WeatherModel.KEY_WEATHER_MODEL, weatherModel.getDataMap());
+        mDataMap.putDataMap(KEY_WEATHER_MODEL, weatherModel.getDataMap());
     }
 
     @Nullable
     public WeatherModel maybeGetWeatherModel() {
-        if (containsKey(WeatherModel.KEY_WEATHER_MODEL)) {
-            return new WeatherModel(mDataMap.getDataMap(WeatherModel.KEY_WEATHER_MODEL));
+        if (containsKey(KEY_WEATHER_MODEL)) {
+            return new WeatherModel(mDataMap.getDataMap(KEY_WEATHER_MODEL));
         }
         return null;
     }

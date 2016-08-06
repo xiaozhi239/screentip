@@ -94,14 +94,6 @@ public class ConnectManager {
         return null;
     }
 
-    /**
-     * Check if the data item is valid and contains key or not.
-     */
-    public boolean containsKey(DataItem item, String key) {
-        DataMap dataMap = getDataMapFromItem(item);
-        return dataMap != null && dataMap.containsKey(key);
-    }
-
     @Nullable
     private DataMap getDataMapFromItem(DataItem item) {
         if (DATA_LAYER_WATCH_FACE_CONFIG_PATH.equals(item.getUri().getPath())) {

@@ -108,12 +108,12 @@ class CharacterWatchFaceConnector implements
     }
 
     private void processConfigModel(ConfigModel configModel) {
-        if (configModel.containsKey(ConfigModel.KEY_TICK_COLOR)) {
-            String color = configModel.getDataMap().getString(ConfigModel.KEY_TICK_COLOR);
+        if (configModel.maybeGetTickColor() != null) {
+            String color = configModel.maybeGetTickColor();
             mWatchFaceRenderer.setTickColor(Color.parseColor(color));
         }
-        if (configModel.containsKey(ConfigModel.KEY_HAND_COLOR)) {
-            String color = configModel.getDataMap().getString(ConfigModel.KEY_HAND_COLOR);
+        if (configModel.maybeGetHandColor() != null) {
+            String color = configModel.maybeGetHandColor();
             mWatchFaceRenderer.setHandColor(Color.parseColor(color));
         }
         if (FLAGS.SCREEN_TEXT) {
@@ -128,8 +128,8 @@ class CharacterWatchFaceConnector implements
                 mWatchFaceRenderer.setWeatherModel(weatherModel);
             }
         }
-        if (configModel.containsKey(ConfigModel.KEY_BACKGROUND_IMG)) {
-            Asset asset = configModel.getDataMap().getAsset(ConfigModel.KEY_BACKGROUND_IMG);
+        if (configModel.maybeGetBackgroundImage() != null) {
+            Asset asset = configModel.maybeGetBackgroundImage();
             new LoadBitmapAsyncTask(
                     mGoogleApiClient, mLoadBitmapCompleteCallback).execute(asset);
         }

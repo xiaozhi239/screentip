@@ -82,7 +82,7 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
     public void sendConfigChangeToWatch() {
         if (mBackgroundImage != null) {
             Asset asset = ImageUtils.compressAndCreateAssetFromBitmap(mBackgroundImage);
-            getNewChangeConfigModel().getDataMap().putAsset(ConfigModel.KEY_BACKGROUND_IMG, asset);
+            getNewChangeConfigModel().setBackgroundImage(asset);
         }
         if (!getNewChangeConfigModel().isEmpty()) {
             ConnectManager.getInstance().sendConfigModel(mGoogleApiClient, getNewChangeConfigModel());
@@ -127,11 +127,11 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
     }
 
     public void setTickColor(String tickColor) {
-        getNewChangeConfigModel().getDataMap().putString(ConfigModel.KEY_TICK_COLOR, tickColor);
+        getNewChangeConfigModel().setTickColor(tickColor);
     }
 
     public void setHandColor(String handColor) {
-        getNewChangeConfigModel().getDataMap().putString(ConfigModel.KEY_HAND_COLOR, handColor);
+        getNewChangeConfigModel().setHandColor(handColor);
     }
 
     public void setBackgroundImage(Bitmap backgroundImage) {

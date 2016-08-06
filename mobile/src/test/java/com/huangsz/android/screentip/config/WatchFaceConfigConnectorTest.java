@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 
 import com.huangsz.android.screentip.BuildConfig;
-import com.huangsz.android.screentip.connect.model.ConfigModel;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
 import com.huangsz.android.screentip.nodes.NodeMonitor;
 
@@ -44,15 +43,13 @@ public class WatchFaceConfigConnectorTest {
     @Test
     public void setTickColor() {
         connector.setTickColor("white");
-        assertEquals("white",
-                connector.getNewChangeConfigModel().getDataMap().getString(ConfigModel.KEY_TICK_COLOR));
+        assertEquals("white", connector.getNewChangeConfigModel().maybeGetTickColor());
     }
 
     @Test
     public void setHandColor() {
         connector.setHandColor("red");
-        assertEquals("red",
-                connector.getNewChangeConfigModel().getDataMap().getString(ConfigModel.KEY_HAND_COLOR));
+        assertEquals("red", connector.getNewChangeConfigModel().maybeGetHandColor());
     }
 
     @Test

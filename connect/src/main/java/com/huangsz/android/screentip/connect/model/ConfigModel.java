@@ -10,15 +10,15 @@ import com.google.android.gms.wearable.DataMap;
  */
 public class ConfigModel extends Model {
 
-    public static final String KEY_TICK_COLOR = "KEY_TICK_COLOR";
+    private static final String KEY_TICK_COLOR = "KEY_TICK_COLOR";
 
-    public static final String KEY_HAND_COLOR = "KEY_HAND_COLOR";
+    private static final String KEY_HAND_COLOR = "KEY_HAND_COLOR";
 
-    public static final String KEY_BACKGROUND_IMG = "KEY_BACKGROUND_IMG";
+    private static final String KEY_BACKGROUND_IMG = "KEY_BACKGROUND_IMG";
 
-    public static final String KEY_TEXT_CONFIG_MODEL = "KEY_TEXT_CONFIG_MODEL";
+    private static final String KEY_TEXT_CONFIG_MODEL = "KEY_TEXT_CONFIG_MODEL";
 
-    public static final String KEY_WEATHER_MODEL = "KEY_WEATHER_MODEL";
+    private static final String KEY_WEATHER_MODEL = "KEY_WEATHER_MODEL";
 
     public ConfigModel() {
         super();

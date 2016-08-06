@@ -1,5 +1,7 @@
 package com.huangsz.android.screentip.connect.model;
 
+import android.support.annotation.Nullable;
+
 import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataMap;
 
@@ -8,12 +10,7 @@ import com.google.android.gms.wearable.DataMap;
  */
 public class SnapshotResponseModel extends Model {
 
-    /**
-     * Key for this model.
-     */
-    public static final String KEY_SNAPSHOT_RESPONSE_MODEL = "KEY_SNAPSHOT_RESPONSE_MODEL";
-
-    public static final String KEY_SNAPSHOT = "KEY_SNAPSHOT";
+    private static final String KEY_SNAPSHOT = "KEY_SNAPSHOT";
 
     public SnapshotResponseModel() {
         super();
@@ -23,7 +20,8 @@ public class SnapshotResponseModel extends Model {
         super(dataMap);
     }
 
-    public Asset getSnapshot() {
+    @Nullable
+    public Asset maybeGetSnapshot() {
         return mDataMap.getAsset(KEY_SNAPSHOT);
     }
 

@@ -22,6 +22,9 @@ public class ConnectManager {
     /** Key for the DataMap which contains the watch face configuration information.  */
     private static final String KEY_CONFIG_MODEL = "KEY_CONFIG_MODEL";
 
+    /** Key for the response from the watch regarding the snapshot request sent from mobile. */
+    private static final String KEY_SNAPSHOT_RESPONSE_MODEL = "KEY_SNAPSHOT_RESPONSE_MODEL";
+
     private static ConnectManager sInstance = null;
 
     public static ConnectManager getInstance() {
@@ -58,8 +61,7 @@ public class ConnectManager {
         new ConnectClient(googleApiClient) {
             @Override
             void putData(DataMap dataMap) {
-                dataMap.putDataMap(SnapshotResponseModel.KEY_SNAPSHOT_RESPONSE_MODEL,
-                        response.getDataMap());
+                dataMap.putDataMap(KEY_SNAPSHOT_RESPONSE_MODEL, response.getDataMap());
             }
         }.send();
     }
@@ -86,10 +88,8 @@ public class ConnectManager {
     @Nullable
     public SnapshotResponseModel maybeGetSnapshotResponseModel(DataItem item) {
         DataMap dataMap = getDataMapFromItem(item);
-        if (dataMap != null
-                && dataMap.containsKey(SnapshotResponseModel.KEY_SNAPSHOT_RESPONSE_MODEL)) {
-            return new SnapshotResponseModel(dataMap.getDataMap(
-                    SnapshotResponseModel.KEY_SNAPSHOT_RESPONSE_MODEL));
+        if (dataMap != null && dataMap.containsKey(KEY_SNAPSHOT_RESPONSE_MODEL)) {
+            return new SnapshotResponseModel(dataMap.getDataMap(KEY_SNAPSHOT_RESPONSE_MODEL));
         }
         return null;
     }

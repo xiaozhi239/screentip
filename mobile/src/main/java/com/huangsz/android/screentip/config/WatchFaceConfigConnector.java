@@ -183,7 +183,7 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
         SnapshotResponseModel snapshotResponse = connectManager.maybeGetSnapshotResponseModel(item);
         if (snapshotResponse != null) {
             new LoadBitmapAsyncTask(mGoogleApiClient, mLoadSnapshotCallback)
-                    .execute(snapshotResponse.getSnapshot());
+                    .execute(snapshotResponse.maybeGetSnapshot());
         }
     }
 }

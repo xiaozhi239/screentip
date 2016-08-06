@@ -12,10 +12,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 import com.huangsz.android.screentip.R;
+import com.huangsz.android.screentip.common.feature.FLAGS;
 import com.huangsz.android.screentip.common.utils.UnitTransferUtils;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
 import com.huangsz.android.screentip.connect.model.WeatherModel;
-import com.huangsz.android.screentip.feature.FLAGS;
 
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -223,7 +223,7 @@ class CharacterWatchFaceRenderer {
             drawText(mTextModel, mTextPaint, canvas, width, height);
         }
 
-        if (FLAGS.WEATHER && mWeatherModel != null && mWeatherModel.isShowWeather()) {
+        if (FLAGS.SCREEN_WEATHER && mWeatherModel != null && mWeatherModel.isShowWeather()) {
             drawText(mWeatherModel.getTextConfigModel(), mWeatherPaint, canvas, width, height);
         }
     }

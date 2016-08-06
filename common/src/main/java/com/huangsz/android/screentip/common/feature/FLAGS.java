@@ -1,4 +1,4 @@
-package com.huangsz.android.screentip.feature;
+package com.huangsz.android.screentip.common.feature;
 
 /**
  * Mark what feature is being turned on.

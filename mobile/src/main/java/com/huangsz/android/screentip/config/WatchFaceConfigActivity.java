@@ -25,7 +25,7 @@ import com.huangsz.android.screentip.common.utils.ImageUtils;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
 import com.huangsz.android.screentip.connect.model.WeatherModel;
 import com.huangsz.android.screentip.data.location.LocationTracker;
-import com.huangsz.android.screentip.feature.FLAGS;
+import com.huangsz.android.screentip.common.feature.FLAGS;
 import com.huangsz.android.screentip.nodes.NodeMonitor;
 import com.huangsz.android.screentip.widget.ColorChooserDialog;
 import com.huangsz.android.screentip.widget.ShareWatchFaceDialog;

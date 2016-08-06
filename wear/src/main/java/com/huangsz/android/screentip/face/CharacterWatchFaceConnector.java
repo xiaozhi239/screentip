@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -19,6 +18,7 @@ import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
+import com.huangsz.android.screentip.common.feature.FLAGS;
 import com.huangsz.android.screentip.common.utils.ImageUtils;
 import com.huangsz.android.screentip.connect.ConnectManager;
 import com.huangsz.android.screentip.connect.model.ConfigModel;
@@ -26,7 +26,6 @@ import com.huangsz.android.screentip.connect.model.SnapshotResponseModel;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
 import com.huangsz.android.screentip.connect.model.WeatherModel;
 import com.huangsz.android.screentip.connect.tasks.LoadBitmapAsyncTask;
-import com.huangsz.android.screentip.feature.FLAGS;
 
 /**
  * Responsible for the watch face related connection and data syncing between wear and handheld.
@@ -122,7 +121,7 @@ class CharacterWatchFaceConnector implements
                 mWatchFaceRenderer.setText(textModel);
             }
         }
-        if (FLAGS.WEATHER) {
+        if (FLAGS.SCREEN_WEATHER) {
             WeatherModel weatherModel = configModel.maybeGetWeatherModel();
             if (weatherModel != null) {
                 mWatchFaceRenderer.setWeatherModel(weatherModel);

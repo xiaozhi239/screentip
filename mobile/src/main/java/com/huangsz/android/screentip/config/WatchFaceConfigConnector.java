@@ -15,6 +15,7 @@ import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.Wearable;
+import com.google.common.annotations.VisibleForTesting;
 import com.huangsz.android.screentip.common.utils.ImageUtils;
 import com.huangsz.android.screentip.connect.ConnectManager;
 import com.huangsz.android.screentip.connect.model.ConfigModel;
@@ -35,8 +36,8 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
     /** For sending only the updated part to the watch */
     private ConfigModel mNewChangeConfigModel;
 
-    /** ConfigModel representing the current updated watch face state. */
-    private ConfigModel mUpdatedConfigModel;
+    /** ConfigModel which has been synced to the wear. */
+    private ConfigModel mSyncedConfigModel;
 
     private Bitmap mBackgroundImage;
 
@@ -65,6 +66,8 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
                 .addOnConnectionFailedListener(this)
                 .addApi(Wearable.API)
                 .build();
+        mNewChangeConfigModel = new ConfigModel();
+        mSyncedConfigModel = new ConfigModel();
     }
 
     public void maybeConnect() {
@@ -86,7 +89,7 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
         }
         if (!getNewChangeConfigModel().isEmpty()) {
             ConnectManager.getInstance().sendConfigModel(mGoogleApiClient, getNewChangeConfigModel());
-            resetConfig();
+            updateSyncedConfifModel();
         }
     }
 
@@ -149,20 +152,29 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
                 && mNodeMonitor.hasAvailableNode();
     }
 
-    public ConfigModel getNewChangeConfigModel() {
-        if (mNewChangeConfigModel == null) {
-            mNewChangeConfigModel = new ConfigModel();
-        }
+    @VisibleForTesting
+    ConfigModel getNewChangeConfigModel() {
         return mNewChangeConfigModel;
     }
 
-    private void resetConfig() {
-        if (mUpdatedConfigModel == null) {
-            mUpdatedConfigModel = getNewChangeConfigModel();
-        } else {
-            mUpdatedConfigModel.onModelUpdate(mNewChangeConfigModel);
-        }
-        mNewChangeConfigModel = null;
+    /** Returns the state presented in the wear. */
+    public Bundle getSavedState() {
+        return mSyncedConfigModel.toBundle();
+    }
+
+    public void setSavedState(Bundle savedState) {
+        mSyncedConfigModel = new ConfigModel();
+        mSyncedConfigModel.fromBundle(savedState);
+    }
+
+    public ConfigModel getSyncedConfigModel() {
+        return mSyncedConfigModel;
+    }
+
+    @VisibleForTesting
+    void updateSyncedConfifModel() {
+        mSyncedConfigModel.onModelUpdate(mNewChangeConfigModel);
+        mNewChangeConfigModel = new ConfigModel();
     }
 
     private final DataApi.DataListener mOnDataListener = new DataApi.DataListener() {

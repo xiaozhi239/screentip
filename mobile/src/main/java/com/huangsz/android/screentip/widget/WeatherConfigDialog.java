@@ -189,6 +189,11 @@ public class WeatherConfigDialog extends BaseConfigDialog {
             double latitude = location.getLatitude();
             mWeatherDataFuture =
                     mWeatherDataManager.fetchWeather(latitude, longitude, unit.getValue());
+        } else {
+            Toast.makeText(
+                    getActivity(),
+                    "Not able to get the location for this device",
+                    Toast.LENGTH_LONG).show();
         }
     }
 }

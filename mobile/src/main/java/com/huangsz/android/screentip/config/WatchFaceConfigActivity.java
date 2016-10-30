@@ -22,6 +22,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.huangsz.android.screentip.R;
 import com.huangsz.android.screentip.common.utils.HintUtils;
 import com.huangsz.android.screentip.common.utils.ImageUtils;
+import com.huangsz.android.screentip.connect.model.ConfigModel;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
 import com.huangsz.android.screentip.connect.model.WeatherModel;
 import com.huangsz.android.screentip.data.location.LocationTracker;
@@ -44,6 +45,8 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
     private static final int CODE_SELECT_BACKGROUND_PICTURE = 0;
 
     private static final long DISMISS_SNAPSHOT_WAITING_IN_MILLIS = 5000;
+
+    private static final String KEY_SAVED_CONFIG_STATE = "saved_config_state";
 
     private View mConfigTickColorPreview;
 
@@ -78,6 +81,12 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
     private ProgressDialog mProgressDialog;
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBundle(KEY_SAVED_CONFIG_STATE, mWatchFaceConfigConnector.getSavedState());
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_watch_face_config);
@@ -90,8 +99,35 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
         mUpdateConfigButton = (Button) findViewById(R.id.configuration_update_button);
         mBackgroundImageView = (ImageView) findViewById(R.id.configuration_background);
         mNodeMonitor = NodeMonitor.getInstance();
-        mWatchFaceConfigConnector = new WatchFaceConfigConnector(this, mNodeMonitor, mConfigHandler);
+        mWatchFaceConfigConnector =
+                new WatchFaceConfigConnector(this, mNodeMonitor, mConfigHandler);
+
+        if (savedInstanceState != null) {
+            recoverState(savedInstanceState.getBundle(KEY_SAVED_CONFIG_STATE));
+        }
+
         setupListeners();
+    }
+
+    private void recoverState(Bundle savedState) {
+        mWatchFaceConfigConnector.setSavedState(savedState);
+        ConfigModel updatedConfigModel = mWatchFaceConfigConnector.getSyncedConfigModel();
+        if (updatedConfigModel.maybeGetTickColor() != null) {
+            mConfigTickColorPreview
+                    .setBackgroundColor(Color.parseColor(updatedConfigModel.maybeGetTickColor()));
+        }
+        if (updatedConfigModel.maybeGetHandColor() != null) {
+            mConfigHandColorPreview
+                    .setBackgroundColor(Color.parseColor(updatedConfigModel.maybeGetHandColor()));
+        }
+        if (updatedConfigModel.maybeGetTextConfigModel() != null) {
+            setTextPreview(updatedConfigModel.maybeGetTextConfigModel());
+        }
+        if (updatedConfigModel.maybeGetWeatherModel() != null) {
+            setWeatherPreview(updatedConfigModel.maybeGetWeatherModel());
+        }
+
+        // TODO(huangsz): Update the dialogs when needed.
     }
 
     private void setupListeners() {
@@ -299,6 +335,17 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
         }, DISMISS_SNAPSHOT_WAITING_IN_MILLIS);
     }
 
+    private void setTextPreview(TextConfigModel textModel) {
+        mConfigTextPreview.setTextColor(Color.parseColor(textModel.maybeGetColor()));
+        mConfigTextPreview.setText(textModel.maybeGetContent());
+    }
+
+    private void setWeatherPreview(WeatherModel weatherModel) {
+        TextConfigModel textModel = weatherModel.getTextConfigModel();
+        mConfigWeatherTextPreview.setTextColor(Color.parseColor(textModel.maybeGetColor()));
+        mConfigWeatherTextPreview.setText(textModel.maybeGetContent());
+    }
+
     public static class ConfigHandler extends Handler {
 
         public static final int MESSAGE_TICK_COLOR = 1;
@@ -341,10 +388,7 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                 case MESSAGE_TEXT:
                     if (FLAGS.SCREEN_TEXT) {
                         TextConfigModel textModel = (TextConfigModel) msg.obj;
-                        activity.mConfigTextPreview.setTextColor(
-                                Color.parseColor(textModel.maybeGetColor()));
-                        activity.mConfigTextPreview.setText(
-                                textModel.maybeGetContent());
+                        activity.setTextPreview(textModel);
                         activity.mWatchFaceConfigConnector.setTextConfigModel(textModel);
                     }
                     break;
@@ -362,11 +406,7 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
                 case MESSAGE_WEATHER:
                     if (FLAGS.SCREEN_WEATHER) {
                         WeatherModel weatherModel = (WeatherModel) msg.obj;
-                        TextConfigModel textModel = weatherModel.getTextConfigModel();
-                        activity.mConfigWeatherTextPreview.setTextColor(
-                                Color.parseColor(textModel.maybeGetColor()));
-                        activity.mConfigWeatherTextPreview.setText(
-                                textModel.maybeGetContent());
+                        activity.setWeatherPreview(weatherModel);
                         activity.mWatchFaceConfigConnector.setWeatherModel(weatherModel);
                     }
                     break;

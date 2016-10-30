@@ -1,5 +1,7 @@
 package com.huangsz.android.screentip.connect.model;
 
+import android.os.Bundle;
+
 import com.google.android.gms.wearable.DataMap;
 
 /**
@@ -36,5 +38,13 @@ public abstract class Model {
             return mDataMap.equals(((Model) another).mDataMap);
         }
         return super.equals(another);
+    }
+
+    public Bundle toBundle() {
+        return mDataMap.toBundle();
+    }
+
+    public void fromBundle(Bundle bundle) {
+        mDataMap = mDataMap.fromBundle(bundle);
     }
 }

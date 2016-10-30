@@ -49,8 +49,8 @@ class FetchWeatherTask extends AsyncTask<String, Void, WeatherData> {
         checkArgument(params.length == 3);
 
         // api.openweathermap.org/data/2.5/weather?lat=35&lon=139&units=metric
-        String longitude = params[0];
-        String latitude = params[1];
+        String latitude = params[0];
+        String longitude = params[1];
         String units = params[2];
 
         // These two need to be declared outside the try/catch

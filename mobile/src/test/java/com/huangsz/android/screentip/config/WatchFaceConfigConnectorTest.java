@@ -2,9 +2,12 @@ package com.huangsz.android.screentip.config;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.os.Handler;
 
+import com.google.android.gms.wearable.DataMap;
 import com.huangsz.android.screentip.BuildConfig;
+import com.huangsz.android.screentip.connect.model.ConfigModel;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
 import com.huangsz.android.screentip.nodes.NodeMonitor;
 
@@ -74,6 +77,19 @@ public class WatchFaceConfigConnectorTest {
         assertEquals(textConfigModel, connector.getNewChangeConfigModel().maybeGetTextConfigModel());
         connector.sendConfigChangeToWatch();
         assertTrue(connector.getNewChangeConfigModel().isEmpty());
+    }
+
+    @Test
+    public void saveAndRestoreState() {
+        connector.setHandColor("red");
+        connector.setTickColor("blue");
+        connector.updateSyncedConfifModel();
+
+        Bundle bundle = connector.getSavedState();
+        connector.setSavedState(bundle);
+        ConfigModel restoredModel = connector.getSyncedConfigModel();
+        assertEquals("red", restoredModel.maybeGetHandColor());
+        assertEquals("blue", restoredModel.maybeGetTickColor());
     }
 
     private TextConfigModel createTextConfigModel() {

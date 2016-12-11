@@ -51,6 +51,9 @@
           <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
         </intent-filter>
       </service>
+
+      <service android:name=".data.weather.WeatherIntentService" android:exported="false" />
+      <receiver android:name=".data.weather.WeatherIntentReceiver" />
     </application>
 
 </manifest>

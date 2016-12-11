@@ -21,6 +21,7 @@ import com.huangsz.android.screentip.common.utils.ViewUtils;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
 import com.huangsz.android.screentip.connect.model.WeatherModel;
 import com.huangsz.android.screentip.data.location.LocationTracker;
+import com.huangsz.android.screentip.data.weather.WeatherAlarmUtils;
 import com.huangsz.android.screentip.data.weather.WeatherData;
 import com.huangsz.android.screentip.data.weather.WeatherDataManager;
 
@@ -125,20 +126,17 @@ public class WeatherConfigDialog extends BaseConfigDialog {
                     Toast.LENGTH_LONG).show();
             return;
         }
-        WeatherData weatherData;
-        try {
-            weatherData = mWeatherDataFuture.get();
-        } catch (ExecutionException | InterruptedException e) {
-            Log.e(TAG, e.toString());
-            return;
-        }
-        mWeatherModel.setShowWeather(mWeatherCheckBox.isChecked());
+
+        WeatherData weatherData = null;
+        TextConfigModel textModel = null;
         if (mWeatherCheckBox.isChecked()) {
-            WeatherModel.Unit unit =
-                    WeatherModel.Unit.values()[mUnitSpinner.getSelectedItemPosition()];
-            mWeatherModel.setTemperatureUnit(unit);
-            mWeatherModel.setCurrentTemperature(weatherData.getCurrentTemperature());
-            TextConfigModel textModel = new TextConfigModel();
+            try {
+                weatherData = mWeatherDataFuture.get();
+            } catch (ExecutionException | InterruptedException e) {
+                Log.e(TAG, e.toString());
+                return;
+            }
+            textModel = new TextConfigModel();
             mWeatherModel.setTextConfigModel(textModel);
             textModel.setColor(mColorSpinner.getSelectedItem().toString());
             textModel.setTextSize(getFontDpFromSpinnerSelection(
@@ -150,7 +148,12 @@ public class WeatherConfigDialog extends BaseConfigDialog {
             textModel.setCoordinateX(mCoordinateX.getProgress());
             textModel.setCoordinateY(mCoordinateY.getProgress());
 
+            WeatherAlarmUtils.setUpPeriodicWeatherUpdate(getActivity());
+        } else {
+            WeatherAlarmUtils.cancelPeriodicWeatherUpdate(getActivity());
         }
+        mWeatherModel = mWeatherDataManager.createWeatherModel(
+                mWeatherCheckBox.isChecked(), weatherData, textModel);
         sendMessage(mWeatherModel);
     }
 
@@ -185,10 +188,10 @@ public class WeatherConfigDialog extends BaseConfigDialog {
         if (location != null) {
             WeatherModel.Unit unit =
                     WeatherModel.Unit.values()[mUnitSpinner.getSelectedItemPosition()];
+            mWeatherDataManager.setWeatherUnit(unit);
             double longitude = location.getLongitude();
             double latitude = location.getLatitude();
-            mWeatherDataFuture =
-                    mWeatherDataManager.fetchWeather(latitude, longitude, unit.getValue());
+            mWeatherDataFuture = mWeatherDataManager.fetchWeather(latitude, longitude);
         } else {
             Toast.makeText(
                     getActivity(),

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -28,7 +29,7 @@ import com.huangsz.android.screentip.connect.tasks.LoadBitmapAsyncTask;
 /**
  * Control the connection between the configuration activity and the watch face service.
  */
-class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
+public class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "WFConfigConnector";
@@ -45,6 +46,7 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
 
     private NodeMonitor mNodeMonitor;
 
+    @Nullable
     private Handler mUiHandler;
 
     LoadBitmapAsyncTask.PostExecuteCallback mLoadSnapshotCallback
@@ -54,11 +56,14 @@ class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallbacks,
             Message message = new Message();
             message.what = WatchFaceConfigActivity.ConfigHandler.MESSAGE_SNAPSHOT_LOADED;
             message.obj = bitmap;
-            mUiHandler.sendMessage(message);
+            if (mUiHandler != null) {
+                mUiHandler.sendMessage(message);
+            }
         }
     };
 
-    WatchFaceConfigConnector(Context context, NodeMonitor nodeMonitor, Handler uiHandler) {
+    public WatchFaceConfigConnector(
+            Context context, NodeMonitor nodeMonitor, @Nullable  Handler uiHandler) {
         mNodeMonitor = nodeMonitor;
         mUiHandler = uiHandler;
         mGoogleApiClient = new GoogleApiClient.Builder(context)

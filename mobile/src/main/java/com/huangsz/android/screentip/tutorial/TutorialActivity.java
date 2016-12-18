@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +13,7 @@ import android.widget.ImageView;
 
 import com.huangsz.android.screentip.R;
 import com.huangsz.android.screentip.config.WatchFaceConfigActivity;
-import com.huangsz.android.screentip.data.PreferenceHelper;
+import com.huangsz.android.screentip.data.persist.SettingPersistenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +33,15 @@ public class TutorialActivity extends Activity {
 
     private Button mStartButton;
 
+    private SettingPersistenceManager mSettingPersistManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutorial);
+        mSettingPersistManager = new SettingPersistenceManager(this);
         // TODO(huangsz) Simplify this, there is no need to launch this activity at all.
-        if (PreferenceHelper.isTutorialPresented(this)) {
+        if (mSettingPersistManager.isTutorialPresented()) {
             startConfigActivity();
         }
         mViewPager = (ViewPager) findViewById(R.id.tutorial_viewpager);
@@ -82,7 +84,7 @@ public class TutorialActivity extends Activity {
     }
 
     private void onStartButtonPressed() {
-        PreferenceHelper.setTutorialPresented(this, true);
+        mSettingPersistManager.setTutorialPresented(true);
         startConfigActivity();
     }
 

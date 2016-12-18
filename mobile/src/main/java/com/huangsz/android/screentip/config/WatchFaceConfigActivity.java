@@ -195,6 +195,8 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
         }
 
         // weather dialog
+        // TODO: udpate weather dialog according to current weather information. Also there is a
+        // bug that the weather is 0.0 each time, only get the actual data on the second time.
         RelativeLayout weatherLayout =
                 (RelativeLayout) findViewById(R.id.configuration_weather_layout);
         if (FLAGS.SCREEN_WEATHER) {

@@ -162,18 +162,17 @@ public class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallb
         return mNewChangeConfigModel;
     }
 
-    /** Returns the state presented in the wear. */
-    public Bundle getSavedState() {
-        return mSyncedConfigModel.toBundle();
-    }
-
-    public void setSavedState(Bundle savedState) {
-        mSyncedConfigModel = new ConfigModel();
-        mSyncedConfigModel.fromBundle(savedState);
-    }
-
     public ConfigModel getSyncedConfigModel() {
         return mSyncedConfigModel;
+    }
+
+    public void setSyncedConfigModel(ConfigModel configModel) {
+        mSyncedConfigModel = configModel;
+    }
+
+    public void setSyncedConfigModel(Bundle savedState) {
+        mSyncedConfigModel = new ConfigModel();
+        mSyncedConfigModel.fromBundle(savedState);
     }
 
     @VisibleForTesting

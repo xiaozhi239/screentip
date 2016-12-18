@@ -1,5 +1,7 @@
 package com.huangsz.android.screentip.connect.model;
 
+import android.content.SharedPreferences;
+
 import com.google.android.gms.wearable.DataMap;
 
 /**
@@ -52,12 +54,12 @@ public class WeatherModel extends Model {
         return mDataMap.getBoolean(KEY_SHOW_WEATHER, false);
     }
 
-    public void setCurrentTemperature(double degree) {
-        mDataMap.putDouble(KEY_CURRENT_TEMPERATURE, degree);
+    public void setCurrentTemperature(float degree) {
+        mDataMap.putFloat(KEY_CURRENT_TEMPERATURE, degree);
     }
 
-    public double getCurrentTemperature() {
-        return mDataMap.getDouble(KEY_CURRENT_TEMPERATURE);
+    public float getCurrentTemperature() {
+        return mDataMap.getFloat(KEY_CURRENT_TEMPERATURE);
     }
 
     public void setTemperatureUnit(Unit unit) {
@@ -75,5 +77,30 @@ public class WeatherModel extends Model {
 
     public TextConfigModel getTextConfigModel() {
         return new TextConfigModel(mDataMap.getDataMap(KEY_TEXT_CONFIG_MODEL));
+    }
+
+    @Override
+    public void persistData(SharedPreferences.Editor prefEditor, String keyPrefix) {
+        persistIfNotNull(prefEditor, keyPrefix, KEY_SHOW_WEATHER, isShowWeather());
+        if (isShowWeather()) {
+            persistIfNotNull(
+                    prefEditor, keyPrefix, KEY_CURRENT_TEMPERATURE, getCurrentTemperature());
+            persistIfNotNull(
+                    prefEditor, keyPrefix, KEY_TEMPERATURE_UNIT, getTemperatureUnit().ordinal());
+            persistIfNotNull(
+                    prefEditor, keyPrefix, KEY_TEXT_CONFIG_MODEL, getTextConfigModel());
+        }
+    }
+
+    @Override
+    public void retrieveDataFromPersistence(SharedPreferences sharedPreferences, String keyPrefix) {
+        retrieveFromPersistenceIfContains(
+                sharedPreferences, keyPrefix, KEY_SHOW_WEATHER, Boolean.class);
+        retrieveFromPersistenceIfContains(
+                sharedPreferences, keyPrefix, KEY_CURRENT_TEMPERATURE, Float.class);
+        retrieveFromPersistenceIfContains(
+                sharedPreferences, keyPrefix, KEY_TEMPERATURE_UNIT, Integer.class);
+        retrieveFromPersistenceIfContains(
+                sharedPreferences, keyPrefix, KEY_TEXT_CONFIG_MODEL, TextConfigModel.class);
     }
 }

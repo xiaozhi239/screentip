@@ -141,7 +141,7 @@ class FetchWeatherTask extends AsyncTask<String, Void, WeatherData> {
         try {
             JSONObject forecastJson = new JSONObject(forecastJsonStr);
             JSONObject mainJson = forecastJson.getJSONObject(KEY_MAIN);
-            weatherData.setCurrentTemperature(mainJson.getDouble(KEY_TEMPERATURE));
+            weatherData.setCurrentTemperature(((float)mainJson.getDouble(KEY_TEMPERATURE)));
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage(), e);
         }

@@ -1,5 +1,6 @@
 package com.huangsz.android.screentip.connect.model;
 
+import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 
 import com.google.android.gms.wearable.DataMap;
@@ -76,5 +77,28 @@ public class TextConfigModel extends Model {
 
     public void setColor(String color) {
         mDataMap.putString(KEY_TEXT_COLOR, color);
+    }
+
+    @Override
+    public void persistData(SharedPreferences.Editor prefEditor, String keyPrefix) {
+        persistIfNotNull(prefEditor, keyPrefix, KEY_TEXT_CONTENT, maybeGetContent());
+        persistIfNotNull(prefEditor, keyPrefix, KEY_TEXT_COLOR, maybeGetColor());
+        persistIfNotNull(prefEditor, keyPrefix, KEY_TEXT_SIZE, maybeGetTextSize());
+        persistIfNotNull(prefEditor, keyPrefix, KEY_COORDINATE_X, maybeGetCoordinateX());
+        persistIfNotNull(prefEditor, keyPrefix, KEY_COORDINATE_Y, maybeGetCoordinateY());
+    }
+
+    @Override
+    public void retrieveDataFromPersistence(SharedPreferences sharedPreferences, String keyPrefix) {
+        retrieveFromPersistenceIfContains(
+                sharedPreferences, keyPrefix, KEY_TEXT_CONTENT, String.class);
+        retrieveFromPersistenceIfContains(
+                sharedPreferences, keyPrefix, KEY_TEXT_COLOR, String.class);
+        retrieveFromPersistenceIfContains(
+                sharedPreferences, keyPrefix, KEY_TEXT_SIZE, Integer.class);
+        retrieveFromPersistenceIfContains(
+                sharedPreferences, keyPrefix, KEY_COORDINATE_X, Float.class);
+        retrieveFromPersistenceIfContains(
+                sharedPreferences, keyPrefix, KEY_COORDINATE_Y, Float.class);
     }
 }

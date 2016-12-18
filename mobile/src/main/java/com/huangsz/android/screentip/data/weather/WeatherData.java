@@ -5,13 +5,13 @@ package com.huangsz.android.screentip.data.weather;
  */
 public class WeatherData {
 
-    private double currentTemperature;
+    private float currentTemperature;
 
-    public void setCurrentTemperature(double temperature) {
+    public void setCurrentTemperature(float temperature) {
         currentTemperature = temperature;
     }
 
-    public double getCurrentTemperature() {
+    public float getCurrentTemperature() {
         return currentTemperature;
     }
 }

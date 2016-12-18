@@ -27,6 +27,7 @@ import com.huangsz.android.screentip.connect.model.TextConfigModel;
 import com.huangsz.android.screentip.connect.model.WeatherModel;
 import com.huangsz.android.screentip.data.location.LocationTracker;
 import com.huangsz.android.screentip.common.feature.FLAGS;
+import com.huangsz.android.screentip.data.persist.ConfigModelPersistenceManager;
 import com.huangsz.android.screentip.nodes.NodeMonitor;
 import com.huangsz.android.screentip.widget.ColorChooserDialog;
 import com.huangsz.android.screentip.widget.ShareWatchFaceDialog;
@@ -80,10 +81,13 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
 
     private ProgressDialog mProgressDialog;
 
+    private ConfigModelPersistenceManager mConfigPersistManager;
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBundle(KEY_SAVED_CONFIG_STATE, mWatchFaceConfigConnector.getSavedState());
+        outState.putBundle(KEY_SAVED_CONFIG_STATE,
+                mWatchFaceConfigConnector.getSyncedConfigModel().toBundle());
     }
 
     @Override
@@ -101,16 +105,23 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
         mNodeMonitor = NodeMonitor.getInstance();
         mWatchFaceConfigConnector =
                 new WatchFaceConfigConnector(this, mNodeMonitor, mConfigHandler);
+        mConfigPersistManager = new ConfigModelPersistenceManager(this);
 
+        // Recover from bundle first, if fails, recover from persistence. If nothing was saved
+        // in persistence, then an empty ConfigModel will be returned.
         if (savedInstanceState != null) {
-            recoverState(savedInstanceState.getBundle(KEY_SAVED_CONFIG_STATE));
+            mWatchFaceConfigConnector.setSyncedConfigModel(
+                    savedInstanceState.getBundle(KEY_SAVED_CONFIG_STATE));
+        } else {
+            mWatchFaceConfigConnector.setSyncedConfigModel(
+                    mConfigPersistManager.retrieveConfigModel());
         }
 
+        recoverState();
         setupListeners();
     }
 
-    private void recoverState(Bundle savedState) {
-        mWatchFaceConfigConnector.setSavedState(savedState);
+    private void recoverState() {
         ConfigModel updatedConfigModel = mWatchFaceConfigConnector.getSyncedConfigModel();
         if (updatedConfigModel.maybeGetTickColor() != null) {
             mConfigTickColorPreview
@@ -227,6 +238,12 @@ public class WatchFaceConfigActivity extends ActionBarActivity {
             public void onClick(View v) {
                 if (mWatchFaceConfigConnector.isConnectedToWear()) {
                     mWatchFaceConfigConnector.sendConfigChangeToWatch();
+                    // Persist the configuration at the same time.
+                    // TODO: The following should be run in background thread.
+                    mConfigPersistManager.persistConfigModel(
+                            mWatchFaceConfigConnector.getSyncedConfigModel());
+                    mConfigPersistManager.persistConfigModel(
+                            mWatchFaceConfigConnector.getSyncedConfigModel());
                 } else {
                     HintUtils.showNoPairedWatchToast(WatchFaceConfigActivity.this);
                 }

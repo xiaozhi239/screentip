@@ -12,6 +12,7 @@ import com.huangsz.android.screentip.config.WatchFaceConfigConnector;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
 import com.huangsz.android.screentip.connect.model.WeatherModel;
 import com.huangsz.android.screentip.data.location.LocationTracker;
+import com.huangsz.android.screentip.data.persist.ConfigModelPersistenceManager;
 import com.huangsz.android.screentip.nodes.NodeMonitor;
 
 /**
@@ -24,6 +25,7 @@ public class WeatherIntentService extends IntentService {
     private LocationTracker locationTracker;
     private WeatherDataManager weatherDataManager;
     private WatchFaceConfigConnector watchFaceConfigConnector;
+    private ConfigModelPersistenceManager persistenceManager;
 
     public WeatherIntentService() {
         super("WeatherIntentService");
@@ -31,6 +33,7 @@ public class WeatherIntentService extends IntentService {
         weatherDataManager = WeatherDataManager.getInstance();
         watchFaceConfigConnector = new WatchFaceConfigConnector(
                 getApplicationContext(), NodeMonitor.getInstance(), null);
+        persistenceManager = new ConfigModelPersistenceManager(getApplicationContext());
     }
 
     @Override
@@ -46,7 +49,13 @@ public class WeatherIntentService extends IntentService {
             Futures.addCallback(weatherDataFuture, new FutureCallback<WeatherData>() {
                 @Override
                 public void onSuccess(WeatherData weatherData) {
-                    watchFaceConfigConnector.setWeatherModel(createWeatherModel(weatherData));
+                    WeatherModel weatherModel = createWeatherModel(weatherData);
+                    if (!weatherModel.isShowWeather()
+                            || weatherModel.getTextConfigModel() == null) {
+                        WeatherAlarmUtils.cancelPeriodicWeatherUpdate(getApplicationContext());
+                        return;
+                    }
+                    watchFaceConfigConnector.setWeatherModel(weatherModel);
                     watchFaceConfigConnector.sendConfigChangeToWatch();
                     Log.i(TAG, String.format(
                             "Weather information sent to watch: %d%s",
@@ -63,8 +72,10 @@ public class WeatherIntentService extends IntentService {
     }
 
     private WeatherModel createWeatherModel(WeatherData weatherData) {
-        // TODO: fetch TextModel from shared preference. Actually, the state of watch face should
-        // be in shared preference.
-        return weatherDataManager.createWeatherModel(true, weatherData, new TextConfigModel());
+        WeatherModel persistedWeatherModel = persistenceManager.retrieveWeatherModel();
+        return weatherDataManager.createWeatherModel(
+                persistedWeatherModel.isShowWeather(),
+                weatherData,
+                persistedWeatherModel.getTextConfigModel());
     }
 }

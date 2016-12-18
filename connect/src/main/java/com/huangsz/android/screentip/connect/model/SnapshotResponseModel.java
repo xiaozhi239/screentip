@@ -1,5 +1,6 @@
 package com.huangsz.android.screentip.connect.model;
 
+import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 
 import com.google.android.gms.wearable.Asset;
@@ -27,5 +28,15 @@ public class SnapshotResponseModel extends Model {
 
     public void setSnapshot(Asset snapshot) {
         mDataMap.putAsset(KEY_SNAPSHOT, snapshot);
+    }
+
+    @Override
+    public void persistData(SharedPreferences.Editor prefEditor, String keyPrefix) {
+        // no op.
+    }
+
+    @Override
+    public void retrieveDataFromPersistence(SharedPreferences sharedPreferences, String keyPrefix) {
+        // no op.
     }
 }

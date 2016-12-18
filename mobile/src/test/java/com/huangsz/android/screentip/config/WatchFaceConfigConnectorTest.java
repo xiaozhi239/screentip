@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 
-import com.google.android.gms.wearable.DataMap;
 import com.huangsz.android.screentip.BuildConfig;
 import com.huangsz.android.screentip.connect.model.ConfigModel;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
@@ -80,13 +79,13 @@ public class WatchFaceConfigConnectorTest {
     }
 
     @Test
-    public void saveAndRestoreState() {
+    public void saveAndRestoreSyncedConfigModel() {
         connector.setHandColor("red");
         connector.setTickColor("blue");
         connector.updateSyncedConfifModel();
 
-        Bundle bundle = connector.getSavedState();
-        connector.setSavedState(bundle);
+        Bundle bundle = connector.getSyncedConfigModel().toBundle();
+        connector.setSyncedConfigModel(bundle);
         ConfigModel restoredModel = connector.getSyncedConfigModel();
         assertEquals("red", restoredModel.maybeGetHandColor());
         assertEquals("blue", restoredModel.maybeGetTickColor());

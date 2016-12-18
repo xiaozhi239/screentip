@@ -1,5 +1,6 @@
 package com.huangsz.android.screentip.connect.model;
 
+import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 
 import com.google.android.gms.wearable.Asset;
@@ -98,5 +99,26 @@ public class ConfigModel extends Model {
         if (configModel.maybeGetWeatherModel() != null) {
             setWeatherModel(configModel.maybeGetWeatherModel());
         }
+    }
+
+    @Override
+    public void persistData(SharedPreferences.Editor prefEditor, String keyPrefix) {
+        persistIfNotNull(prefEditor, keyPrefix, KEY_TICK_COLOR, maybeGetTickColor());
+        persistIfNotNull(prefEditor, keyPrefix, KEY_HAND_COLOR, maybeGetHandColor());
+        persistIfNotNull(prefEditor, keyPrefix, KEY_TEXT_CONFIG_MODEL, maybeGetTextConfigModel());
+        persistIfNotNull(prefEditor, keyPrefix, KEY_WEATHER_MODEL, maybeGetWeatherModel());
+    }
+
+    @Override
+    public void retrieveDataFromPersistence(
+            SharedPreferences sharedPreferences, String keyPrefix) {
+        retrieveFromPersistenceIfContains(
+                sharedPreferences, keyPrefix, KEY_TICK_COLOR, String.class);
+        retrieveFromPersistenceIfContains(
+                sharedPreferences, keyPrefix, KEY_HAND_COLOR, String.class);
+        retrieveFromPersistenceIfContains(
+                sharedPreferences, keyPrefix, KEY_TEXT_CONFIG_MODEL, TextConfigModel.class);
+        retrieveFromPersistenceIfContains(
+                sharedPreferences, keyPrefix, KEY_WEATHER_MODEL, WeatherModel.class);
     }
 }

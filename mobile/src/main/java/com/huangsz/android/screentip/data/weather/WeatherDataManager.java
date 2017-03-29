@@ -7,6 +7,8 @@ import com.google.common.util.concurrent.SettableFuture;
 import com.huangsz.android.screentip.connect.model.TextConfigModel;
 import com.huangsz.android.screentip.connect.model.WeatherModel;
 
+import java.util.Locale;
+
 /**
  * Manages the weather data fetched from the server.
  */
@@ -57,6 +59,10 @@ public class WeatherDataManager {
         if (showWeatherInWatch) {
             weatherModel.setTemperatureUnit(weatherUnit);
             weatherModel.setCurrentTemperature(weatherData.getCurrentTemperature());
+            textConfigModel.setContent(
+                    String.format(Locale.getDefault(), "%.1f %s",
+                            weatherModel.getCurrentTemperature(),
+                            weatherModel.getTemperatureUnit().getSymbol()));
             weatherModel.setTextConfigModel(textConfigModel);
         }
         return weatherModel;

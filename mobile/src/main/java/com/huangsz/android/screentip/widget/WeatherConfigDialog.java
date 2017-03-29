@@ -26,6 +26,7 @@ import com.huangsz.android.screentip.data.weather.WeatherData;
 import com.huangsz.android.screentip.data.weather.WeatherDataManager;
 
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -141,10 +142,6 @@ public class WeatherConfigDialog extends BaseConfigDialog {
             textModel.setColor(mColorSpinner.getSelectedItem().toString());
             textModel.setTextSize(getFontDpFromSpinnerSelection(
                     mFontSpinner.getSelectedItem().toString()));
-            textModel.setContent(
-                    String.format("%.1f %s",
-                            mWeatherModel.getCurrentTemperature(),
-                            mWeatherModel.getTemperatureUnit().getSymbol()));
             textModel.setCoordinateX(mCoordinateX.getProgress());
             textModel.setCoordinateY(mCoordinateY.getProgress());
 

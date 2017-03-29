@@ -88,6 +88,10 @@ public class WatchFaceConfigConnector implements GoogleApiClient.ConnectionCallb
     }
 
     public void sendConfigChangeToWatch() {
+        if (!isConnectedToWear()) {
+            Log.e(TAG, "Trying to update watch face while not connected.");
+            return;
+        }
         if (mBackgroundImage != null) {
             Asset asset = ImageUtils.compressAndCreateAssetFromBitmap(mBackgroundImage);
             getNewChangeConfigModel().setBackgroundImage(asset);

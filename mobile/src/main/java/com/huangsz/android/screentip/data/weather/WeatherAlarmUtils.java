@@ -11,6 +11,10 @@ import android.os.SystemClock;
  */
 public class WeatherAlarmUtils {
 
+    /**
+     * Schedule a periodic update for the weather in watch face. No need to cancel current one if
+     * exists, the method will replace with the current one instead of piling up.
+     */
     public static void setUpPeriodicWeatherUpdate(Context context) {
         Intent intent = new Intent(context, WeatherIntentReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
@@ -23,7 +27,6 @@ public class WeatherAlarmUtils {
                 SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_HOUR,
                 AlarmManager.INTERVAL_HOUR,
                 pendingIntent);
-
     }
 
     public static void cancelPeriodicWeatherUpdate(Context context) {

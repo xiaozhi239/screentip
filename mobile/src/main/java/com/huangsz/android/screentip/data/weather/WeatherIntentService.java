@@ -9,7 +9,6 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.huangsz.android.screentip.config.WatchFaceConfigConnector;
-import com.huangsz.android.screentip.connect.model.TextConfigModel;
 import com.huangsz.android.screentip.connect.model.WeatherModel;
 import com.huangsz.android.screentip.data.location.LocationTracker;
 import com.huangsz.android.screentip.data.persist.ConfigModelPersistenceManager;
@@ -29,10 +28,17 @@ public class WeatherIntentService extends IntentService {
 
     public WeatherIntentService() {
         super("WeatherIntentService");
-        locationTracker = LocationTracker.getInstance(getApplicationContext());
-        weatherDataManager = WeatherDataManager.getInstance();
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.i(TAG, "onCreate");
         watchFaceConfigConnector = new WatchFaceConfigConnector(
                 getApplicationContext(), NodeMonitor.getInstance(), null);
+        watchFaceConfigConnector.maybeConnect();
+        locationTracker = LocationTracker.getInstance(getApplicationContext());
+        weatherDataManager = WeatherDataManager.getInstance();
         persistenceManager = new ConfigModelPersistenceManager(getApplicationContext());
     }
 
@@ -57,8 +63,9 @@ public class WeatherIntentService extends IntentService {
                     }
                     watchFaceConfigConnector.setWeatherModel(weatherModel);
                     watchFaceConfigConnector.sendConfigChangeToWatch();
+                    watchFaceConfigConnector.maybeDisconnect();
                     Log.i(TAG, String.format(
-                            "Weather information sent to watch: %d%s",
+                            "Weather information sent to watch: %f%s",
                             weatherData.getCurrentTemperature(),
                             weatherDataManager.getWeatherUnit().getSymbol()));
                 }

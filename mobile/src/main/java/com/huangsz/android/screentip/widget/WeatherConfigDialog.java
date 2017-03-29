@@ -89,7 +89,6 @@ public class WeatherConfigDialog extends BaseConfigDialog {
                 // Do nothing, just close.
             }
         });
-//        maybeFetchWeatherData();
     }
 
     private void onInitialize(View view) {
